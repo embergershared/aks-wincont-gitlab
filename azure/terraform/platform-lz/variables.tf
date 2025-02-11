@@ -6,3 +6,6 @@ variable "client_secret" {}
 variable "location" {}
 variable "location_short" {}
 variable "base_name" {}
+
+# / Resources within the Storage Account
+variable "containers" { type = set(string) }

@@ -1,2 +1,2 @@
-# aks-wincont-gitlab
-Proof of Concept to run a 3-tier Windows Containers app in Azure, Deployed with GitLab.
+# AKS - Windows containers - GitLab Proof of Concept
+Proof of Concept to run a 3-tier Windows containers app in Azure, Deployed with GitLab.

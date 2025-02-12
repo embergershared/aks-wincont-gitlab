@@ -39,9 +39,13 @@ Use the Azure CLI or Azure PowerShell to create the Microsoft Entra groups. Repl
 
 # [CLI](#tab/CLI)
 
-```azurecli
-appdevs=<Microsoft Entra group name>
-aksops=<Microsoft Entra group name>
+```pwsh
+az login
+
+az account set -s <subscription_id>
+
+$appdevs = "AKS-App-Dev-Team"
+$aksops = "AKS-Operations-Team"
 
 az ad group create --display-name $appdevs --mail-nickname $appdevs
 az ad group create --display-name $aksops --mail-nickname $aksops

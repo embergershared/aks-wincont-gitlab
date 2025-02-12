@@ -32,7 +32,14 @@ Once the files are updated, deploy using terraform cli.
 
 # [CLI](#tab/CLI)
 
-```terracli
+```pwsh
+# Fixes
+## Commented/Removed the bastion module as it requires `azurerm` ~> 4.0
+## Updated route table module to use version 0.3.1
+
+# Turn on terraform debug (eventually)
+Set-Item -Path env:TF_LOG -Value "DEBUG"
+
 terraform init
 terraform plan -out main.tfplan
 terraform apply main.tfplan -auto-approve

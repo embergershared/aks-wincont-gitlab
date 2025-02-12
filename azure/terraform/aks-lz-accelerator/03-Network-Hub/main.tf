@@ -293,30 +293,31 @@ module "avm-res-network-azurefirewall" {
 
 }
 
-module "azure_bastion" {
-  source = "Azure/avm-res-network-bastionhost/azurerm"
+# module "azure_bastion" {
+#   source  = "Azure/avm-res-network-bastionhost/azurerm"
+#   version = "0.4.0"
 
-  name                = "bastion"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  copy_paste_enabled  = true
-  file_copy_enabled   = false
-  sku                 = "Standard"
-  ip_configuration = {
-    name                 = "bastion-ipconfig"
-    subnet_id            = module.avm-res-network-virtualnetwork.subnets["AzureBastionSubnet"].resource_id
-    public_ip_address_id = module.publicIpBastion.public_ip_id
-  }
-  ip_connect_enabled     = true
-  scale_units            = 4
-  shareable_link_enabled = true
-  tunneling_enabled      = true
-  kerberos_enabled       = false
-}
+#   name                = "bastion"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   copy_paste_enabled  = true
+#   file_copy_enabled   = false
+#   sku                 = "Standard"
+#   ip_configuration = {
+#     name                 = "bastion-ipconfig"
+#     subnet_id            = module.avm-res-network-virtualnetwork.subnets["AzureBastionSubnet"].resource_id
+#     public_ip_address_id = module.publicIpBastion.public_ip_id
+#   }
+#   ip_connect_enabled     = true
+#   scale_units            = 4
+#   shareable_link_enabled = true
+#   tunneling_enabled      = true
+#   kerberos_enabled       = false
+# }
 
 module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.2.0"
+  version             = "0.3.1"
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtHubName
   location            = azurerm_resource_group.rg.location

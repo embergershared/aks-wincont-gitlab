@@ -332,3 +332,46 @@ module "avm-res-network-routetable" {
   }
   depends_on = [azurerm_resource_group.rg]
 }
+
+## Added section
+
+#--------------------------------------------------------------
+#   Terraform States Storage Account
+#--------------------------------------------------------------
+#   / Main location storage account for remote backend Terraform States
+resource "azurerm_storage_account" "this" {
+  name                = var.tfStateStorageAccountName
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  large_file_share_enabled        = false
+  nfsv3_enabled                   = false
+  local_user_enabled              = false
+  shared_access_key_enabled       = false
+  allow_nested_items_to_be_public = false # Disable anonymous public read access to containers and blobs
+  https_traffic_only_enabled      = true  # Require secure transfer (HTTPS) to the storage account for REST API Operations
+  min_tls_version                 = "TLS1_2"
+
+  network_rules {
+    default_action             = "Deny"
+    ip_rules                   = ["76.187.69.253", "35.142.162.3"]
+    virtual_network_subnet_ids = []
+  }
+}
+
+################################  Store data in Storage Account  ################################
+#------------------------------
+# - Containers
+#------------------------------
+resource "azurerm_storage_container" "this" {
+  for_each = var.containers
+
+  name                 = each.value
+  storage_account_name = azurerm_storage_account.this.name
+
+  # Infrastructure Protection: Block Internet access and restrict network connectivity to the Storage account via the Storage firewall and access the data objects in the Storage account via Private Endpoint which secures all traffic between VNet and the storage account over a Private Link.
+  container_access_type = "private"
+}

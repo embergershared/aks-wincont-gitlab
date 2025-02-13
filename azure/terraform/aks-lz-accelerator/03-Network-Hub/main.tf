@@ -357,8 +357,12 @@ resource "azurerm_storage_account" "this" {
 
   network_rules {
     default_action             = "Deny"
-    ip_rules                   = ["76.187.69.253", "35.142.162.3"]
+    ip_rules                   = var.authorized_ips
     virtual_network_subnet_ids = []
+    private_link_access {
+      endpoint_resource_id = "/subscriptions/${var.subscription_id}/providers/Microsoft.Security/datascanners/StorageDataScanner"
+      endpoint_tenant_id   = var.tenant_id
+    }
   }
 }
 

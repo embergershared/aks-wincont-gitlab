@@ -30,7 +30,7 @@ resource "azurerm_resource_group" "rg" {
 
 module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.2.0"
+  version             = "0.3.1"
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtLzName
   location            = azurerm_resource_group.rg.location
@@ -369,3 +369,4 @@ module "avm-res-network-appgw" {
 
   depends_on = [module.avm-res-network-vnet-appgw-subnet.resource]
 }
+#*/

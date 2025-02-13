@@ -1,3 +1,4 @@
+/*
 output "speSubnetId" {
   value = module.avm-res-network-vnet-spe-subnet.resource_id
 }
@@ -33,3 +34,4 @@ output "rgLzName" {
 output "vnetLzName" {
   value = module.avm-res-network-vnet.resource.name 
 }
+#*/

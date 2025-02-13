@@ -12,30 +12,30 @@ resource "azurerm_resource_group" "rg" {
 }
 
 locals {
-  jumpbox_nsg_rules = {
-    "rule01" = {
-      name                       = "AllowRDPInBound"
-      access                     = "Allow"
-      destination_address_prefix = "*"
-      destination_port_range     = "3389"
-      direction                  = "Inbound"
-      priority                   = 100
-      protocol                   = "Tcp"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-    }
-    rule02 = {
-      name                       = "AllowSSHInBound"
-      access                     = "Allow"
-      destination_address_prefix = "*"
-      destination_port_range     = "22"
-      direction                  = "Inbound"
-      priority                   = 200
-      protocol                   = "Tcp"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-    }
-  }
+  jumpbox_nsg_rules = {}
+  #   "rule01" = {
+  #     name                       = "AllowRDPInBound"
+  #     access                     = "Allow"
+  #     destination_address_prefix = "*"
+  #     destination_port_range     = "3389"
+  #     direction                  = "Inbound"
+  #     priority                   = 100
+  #     protocol                   = "Tcp"
+  #     source_address_prefix      = "*"
+  #     source_port_range          = "*"
+  #   }
+  #   rule02 = {
+  #     name                       = "AllowSSHInBound"
+  #     access                     = "Allow"
+  #     destination_address_prefix = "*"
+  #     destination_port_range     = "22"
+  #     direction                  = "Inbound"
+  #     priority                   = 200
+  #     protocol                   = "Tcp"
+  #     source_address_prefix      = "*"
+  #     source_port_range          = "*"
+  #   }
+  # }
 }
 
 module "avm-nsg-default" {
@@ -53,7 +53,6 @@ module "avm-nsg-vm" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   security_rules      = local.jumpbox_nsg_rules
-
 }
 
 module "avm-res-network-virtualnetwork" {

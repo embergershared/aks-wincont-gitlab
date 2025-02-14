@@ -174,6 +174,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks-cluster.id
   vm_size               = "Standard_DS2_v2"
   os_disk_size_gb       = 30
+  os_type               = "Linux"
   os_sku                = "Ubuntu"
   min_count             = 1
   max_count             = 3
@@ -189,6 +190,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "win_nodepool" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks-cluster.id
   vm_size               = "Standard_DS2_v2"
   os_disk_size_gb       = 30
+  os_type               = "Windows"
   os_sku                = "Windows2022"
   min_count             = 1
   max_count             = 3

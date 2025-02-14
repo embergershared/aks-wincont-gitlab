@@ -42,6 +42,11 @@ variable "snetVMAddr" {
   default = "10.0.3.0/27"
 }
 
+variable "snetGatewayAddr" {
+  type    = string
+  default = "10.0.4.0/26"
+}
+
 variable "routeAddr" {
   type    = string
   default = "0.0.0.0/0"

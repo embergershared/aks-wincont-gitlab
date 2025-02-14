@@ -134,7 +134,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     only_critical_addons_enabled = true
     vnet_subnet_id               = local.snetAksId
 
-    zones = ["1", "2", "3"]
+    zones = ["1", "3"] # zones = ["1", "2", "3"]
   }
   auto_scaler_profile {
     balance_similar_node_groups = true
@@ -165,7 +165,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   ]
 
   lifecycle {
-    ignore_changes = [ default_node_pool.0.upgrade_settings ]
+    ignore_changes = [default_node_pool.0.upgrade_settings]
   }
 }
 
@@ -181,7 +181,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   max_pods              = 250
   mode                  = "User"
   vnet_subnet_id        = local.snetAksId
-  zones                 = ["1", "2", "3"]
+  zones                 = ["1", "3"] # zones = ["1", "2", "3"]
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {

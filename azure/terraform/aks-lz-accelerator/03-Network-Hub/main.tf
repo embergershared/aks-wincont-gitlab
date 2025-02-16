@@ -93,6 +93,11 @@ module "avm-res-network-virtualnetwork" {
         id = module.avm-res-network-routetable.resource_id
       }
     }
+    GatewaySubnet = {
+      name             = "GatewaySubnet"
+      address_prefixes = [var.snetGatewayAddr]
+    }
+
   }
 }
 

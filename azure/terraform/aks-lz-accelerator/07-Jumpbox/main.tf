@@ -20,7 +20,7 @@ data "azurerm_subnet" "snet-vm" {
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
-  suffix  = ["hub"]
+  suffix  = ["lz"]
 }
 
 module "jumpbox_vm" {
@@ -63,5 +63,4 @@ module "jumpbox_vm" {
     version   = "latest"
   }
 }
-
 

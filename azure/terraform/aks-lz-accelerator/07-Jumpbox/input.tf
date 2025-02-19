@@ -41,3 +41,28 @@ variable "jumpbox_admin_username" {
 variable "jumpbox_admin_password" {
   type    = string
 }
+
+variable "os_type" {
+  type    = string
+  default = "Windows"
+}
+
+variable "sku_size" {
+  type    = string
+  default = "Standard_D4s_v3"
+}
+
+variable "source_image_reference" {
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default = {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2025-datacenter-g2"
+    version   = "latest"
+  }
+}

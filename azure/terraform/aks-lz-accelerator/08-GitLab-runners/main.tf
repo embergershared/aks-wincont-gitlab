@@ -35,8 +35,8 @@ module "jumpbox_vm" {
   location                           = var.location
   name                               = module.naming.virtual_machine.name_unique
   resource_group_name                = var.rgLzName
-  os_type                            = "Linux"
-  sku_size                           = "Standard_B2ms"
+  os_type                            = var.os_type
+  sku_size                           = var.sku_size
   zone                               = 1
 
   network_interfaces = {
@@ -50,17 +50,17 @@ module "jumpbox_vm" {
       }
     }
   }
-
   os_disk = {
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
 
-  source_image_reference = {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
-    version   = "latest"
-  }
+  # source_image_reference = {
+  #   publisher = "Canonical"
+  #   offer     = "0001-com-ubuntu-server-jammy"
+  #   sku       = "22_04-lts-gen2"
+  #   version   = "latest"
+  # }
+  source_image_reference = var.source_image_reference
 }
 

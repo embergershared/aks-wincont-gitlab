@@ -221,6 +221,7 @@ locals {
     akv               = "privatelink.vaultcore.azure.net",
     acr               = "privatelink.azurecr.io",
     aks               = "azmk8s.io"
+    sql               = "privatelink.database.windows.net"
     contoso           = "private.contoso.com"
     AzureUSGovernment = ".cx.aks.containerservice.azure.us"
     AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
@@ -236,6 +237,19 @@ module "avm-res-network-privatednszone-aks" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-ak"
+      vnetid           = local.vnetHubId
+      autoregistration = false
+  } }
+}
+
+module "avm-res-network-privatednszone-sql" {
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  resource_group_name = azurerm_resource_group.rg.name
+  domain_name         = local.domain_name.sql
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-sql"
       vnetid           = local.vnetHubId
       autoregistration = false
   } }

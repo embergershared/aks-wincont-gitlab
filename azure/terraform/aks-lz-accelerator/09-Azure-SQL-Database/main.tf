@@ -29,6 +29,66 @@ locals {
         week_of_year      = 1
       }
     }
+    TimeTracker = {
+      name         = "TimeTracker"
+      create_mode  = "Default"
+      collation    = "SQL_Latin1_General_CP1_CI_AS"
+      license_type = "LicenseIncluded"
+      max_size_gb  = 50
+      sku_name     = "S0"
+
+      short_term_retention_policy = {
+        retention_days           = 1
+        backup_interval_in_hours = 24
+      }
+
+      long_term_retention_policy = {
+        weekly_retention  = "P2W1D"
+        monthly_retention = "P2M"
+        yearly_retention  = "P1Y"
+        week_of_year      = 1
+      }
+    }
+    Classifieds = {
+      name         = "Classifieds"
+      create_mode  = "Default"
+      collation    = "SQL_Latin1_General_CP1_CI_AS"
+      license_type = "LicenseIncluded"
+      max_size_gb  = 50
+      sku_name     = "S0"
+
+      short_term_retention_policy = {
+        retention_days           = 1
+        backup_interval_in_hours = 24
+      }
+
+      long_term_retention_policy = {
+        weekly_retention  = "P2W1D"
+        monthly_retention = "P2M"
+        yearly_retention  = "P1Y"
+        week_of_year      = 1
+      }
+    }
+    Jobs = {
+      name         = "Jobs"
+      create_mode  = "Default"
+      collation    = "SQL_Latin1_General_CP1_CI_AS"
+      license_type = "LicenseIncluded"
+      max_size_gb  = 50
+      sku_name     = "S0"
+
+      short_term_retention_policy = {
+        retention_days           = 1
+        backup_interval_in_hours = 24
+      }
+
+      long_term_retention_policy = {
+        weekly_retention  = "P2W1D"
+        monthly_retention = "P2M"
+        yearly_retention  = "P1Y"
+        week_of_year      = 1
+      }
+    }
   }
 }
 

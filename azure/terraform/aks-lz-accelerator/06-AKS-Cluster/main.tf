@@ -113,6 +113,8 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   role_based_access_control_enabled = true
   http_application_routing_enabled  = true
 
+
+
   web_app_routing {
     dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
   }
@@ -155,6 +157,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"
     load_balancer_sku   = "standard"
+    outbound_type       = "userDefinedRouting"
   }
   oms_agent {
     log_analytics_workspace_id = module.avm-res-operationalinsights-workspace.resource.id
@@ -190,15 +193,15 @@ resource "azurerm_kubernetes_cluster_node_pool" "win_nodepool" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks-cluster.id
   vm_size               = "Standard_DS2_v2"
   #os_disk_size_gb       = 30
-  os_type               = "Windows"
-  os_sku                = "Windows2022"
-  min_count             = 1
-  max_count             = 3
-  enable_auto_scaling   = true
-  max_pods              = 250
-  mode                  = "User"
-  vnet_subnet_id        = local.snetAksId
-  zones                 = ["1", "3"] # zones = ["1", "2", "3"]
+  os_type             = "Windows"
+  os_sku              = "Windows2022"
+  min_count           = 1
+  max_count           = 3
+  enable_auto_scaling = true
+  max_pods            = 250
+  mode                = "User"
+  vnet_subnet_id      = local.snetAksId
+  zones               = ["1", "3"] # zones = ["1", "2", "3"]
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {

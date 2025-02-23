@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timetracker-deployment
+  namespace: timetracker
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: timetracker-deployment
+  template:
+    metadata:
+      labels:
+        app: timetracker-deployment
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      containers:
+      - name: timetracker
+        image: acrakslzaccel234.azurecr.io/timetracker:latest
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionString
+          value: "Server=tcp:xxxxxxxxxxx.database.windows.net,1433;Initial Catalog=timetracker;Persist Security Info=False;User ID=xxxxxxxx;Password=xxxxxxxx;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"

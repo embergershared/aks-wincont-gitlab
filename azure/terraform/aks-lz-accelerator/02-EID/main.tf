@@ -3,6 +3,8 @@
 resource "azurerm_resource_group" "rg" {
   location = var.location
   name     = "rg-use2-391575-s3-akswincont-tfstates"
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 #--------------------------------------------------------------
@@ -34,6 +36,8 @@ resource "azurerm_storage_account" "this" {
       endpoint_tenant_id   = var.tenant_id
     }
   }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 ################################  Store data in Storage Account  ################################

@@ -1,20 +1,5 @@
-locals {
-  vnetLzId         = var.deployingAllInOne == true ? var.vnetLzId : data.azurerm_virtual_network.vnet-lz.0.id
-  snetvmId        = var.deployingAllInOne == true ? var.snetvmId : data.azurerm_subnet.snet-vm.0.id
-}
 
-data "azurerm_virtual_network" "vnet-lz" {
-  count               = var.deployingAllInOne == true ? 0 : 1
-  name                = var.vnetLzName
-  resource_group_name = var.rgLzName
-}
 
-data "azurerm_subnet" "snet-vm" {
-  count                = var.deployingAllInOne == true ? 0 : 1
-  name                 = "snet-vm"
-  virtual_network_name = var.vnetLzName
-  resource_group_name  = var.rgLzName
-}
 
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
@@ -26,8 +11,8 @@ module "naming" {
 module "jumpbox_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
-  admin_username                     = var.jumpbox_admin_username
-  admin_password                     = var.jumpbox_admin_password
+  admin_username                     = var.gl_runner_admin_username
+  admin_password                     = var.gl_runner_admin_password
   disable_password_authentication    = false
   enable_telemetry                   = false
   encryption_at_host_enabled         = true
@@ -38,6 +23,10 @@ module "jumpbox_vm" {
   os_type                            = var.os_type
   sku_size                           = var.sku_size
   zone                               = 1
+
+  bypass_platform_safety_checks_on_user_schedule_enabled = true
+  patch_assessment_mode                                  = "AutomaticByPlatform"
+  patch_mode                                             = "AutomaticByPlatform"
 
   network_interfaces = {
     network_interface_1 = {
@@ -50,6 +39,13 @@ module "jumpbox_vm" {
       }
     }
   }
+
+  managed_identities = {
+    user_assigned_resource_ids = [
+      "/subscriptions/4c88693f-5cc9-4f30-9d1e-d58d4221cf25/resourceGroups/rg-use2-391575-s3-akswincont-avm-lz/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-lz-nih2"
+    ]
+  }
+
   os_disk = {
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"

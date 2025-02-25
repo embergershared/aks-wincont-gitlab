@@ -1,19 +1,6 @@
-locals {
-  vnetHubId         = var.deployingAllInOne == true ? var.vnetHubId : data.azurerm_virtual_network.vnethub.0.id
-  firewallPrivateIp = var.deployingAllInOne == true ? var.firewallPrivateIp : data.azurerm_firewall.firewall.0.ip_configuration.0.private_ip_address
-}
 
-data "azurerm_virtual_network" "vnethub" {
-  count               = var.deployingAllInOne == true ? 0 : 1
-  name                = var.vnetHubName
-  resource_group_name = var.rgHubName
-}
 
-data "azurerm_firewall" "firewall" {
-  count               = var.deployingAllInOne == true ? 0 : 1
-  name                = "azureFirewall"
-  resource_group_name = var.rgHubName
-}
+
 
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
@@ -331,6 +318,11 @@ module "avm-res-network-appgw" {
       interval            = 30
       timeout             = 30
       unhealthy_threshold = 3
+      match = {
+        status_code = [
+          "200-399",
+        ]
+      }
     }
   }
 

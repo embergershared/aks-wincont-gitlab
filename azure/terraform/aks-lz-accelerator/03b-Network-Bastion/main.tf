@@ -1,20 +1,3 @@
-locals {
-  vnetHubId         = var.deployingAllInOne == true ? var.vnetHubId : data.azurerm_virtual_network.vnethub.0.id
-  bastionSubnetId  = var.deployingAllInOne == true ? var.speSubnetId : data.azurerm_subnet.snet-bastion.0.id
-}
-
-data "azurerm_virtual_network" "vnethub" {
-  count               = var.deployingAllInOne == true ? 0 : 1
-  name                = var.vnetHubName
-  resource_group_name = var.rgHubName
-}
-
-data "azurerm_subnet" "snet-bastion" {
-  count                = var.deployingAllInOne == true ? 0 : 1
-  name                 = "AzureBastionSubnet"
-  virtual_network_name = var.vnetHubName
-  resource_group_name  = var.rgHubName
-}
 
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
@@ -35,7 +18,7 @@ module "publicIpBastion" {
 }
 
 module "azure_bastion" {
-  source              = "Azure/avm-res-network-bastionhost/azurerm"
+  source = "Azure/avm-res-network-bastionhost/azurerm"
 
   enable_telemetry    = false
   name                = module.naming.bastion_host.name_unique

@@ -1,5 +1,5 @@
 locals {
-  vnetLzId         = var.deployingAllInOne == true ? var.vnetLzId : data.azurerm_virtual_network.vnet-lz.0.id
+  vnetLzId = var.deployingAllInOne == true ? var.vnetLzId : data.azurerm_virtual_network.vnet-lz.0.id
 
   speSubnetId  = var.deployingAllInOne == true ? var.speSubnetId : data.azurerm_subnet.snet-spe.0.id
   dnszonesqlId = var.deployingAllInOne == true ? var.dnszonesqlId : data.azurerm_private_dns_zone.dnszone-sql.0.id
@@ -126,7 +126,7 @@ module "avm-res-managedidentity-userassignedidentity" {
 }
 
 module "sql_server" {
-  source = "Azure/avm-res-sql-server/azurerm"
+  source                        = "Azure/avm-res-sql-server/azurerm"
   enable_telemetry              = false
   name                          = module.naming.sql_server.name_unique
   resource_group_name           = var.rgLzName
@@ -137,10 +137,10 @@ module "sql_server" {
   server_version                = "12.0"
   databases                     = local.databases
 
-  azuread_administrator     = {
+  azuread_administrator = {
     azuread_authentication_only = false
-    login_username             = module.avm-res-managedidentity-userassignedidentity.client_id
-    object_id                  = module.avm-res-managedidentity-userassignedidentity.principal_id
+    login_username              = module.avm-res-managedidentity-userassignedidentity.client_id
+    object_id                   = module.avm-res-managedidentity-userassignedidentity.principal_id
   }
 
   private_endpoints = {
@@ -148,5 +148,9 @@ module "sql_server" {
       private_dns_zone_resource_ids = [local.dnszonesqlId]
       subnet_resource_id            = local.speSubnetId
     }
+  }
+
+  tags = {
+    "SecurityControl" = "Ignore"
   }
 }

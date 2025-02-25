@@ -1,20 +1,5 @@
-locals {
-  vnetLzId         = var.deployingAllInOne == true ? var.vnetLzId : data.azurerm_virtual_network.vnet-lz.0.id
-  snetvmId        = var.deployingAllInOne == true ? var.snetvmId : data.azurerm_subnet.snet-vm.0.id
-}
 
-data "azurerm_virtual_network" "vnet-lz" {
-  count               = var.deployingAllInOne == true ? 0 : 1
-  name                = var.vnetLzName
-  resource_group_name = var.rgLzName
-}
 
-data "azurerm_subnet" "snet-vm" {
-  count                = var.deployingAllInOne == true ? 0 : 1
-  name                 = "snet-vm"
-  virtual_network_name = var.vnetLzName
-  resource_group_name  = var.rgLzName
-}
 
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
@@ -39,6 +24,10 @@ module "jumpbox_vm" {
   sku_size                           = var.sku_size
   zone                               = 1
 
+  bypass_platform_safety_checks_on_user_schedule_enabled = true
+  patch_assessment_mode                                  = "AutomaticByPlatform"
+  patch_mode                                             = "AutomaticByPlatform"
+
   network_interfaces = {
     network_interface_1 = {
       name = module.naming.network_interface.name_unique
@@ -53,7 +42,7 @@ module "jumpbox_vm" {
 
   os_disk = {
     caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
+    storage_account_type = "Standard_LRS"
   }
 
   # source_image_reference = {

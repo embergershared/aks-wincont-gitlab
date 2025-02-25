@@ -9,34 +9,10 @@ module "naming" {
 resource "azurerm_resource_group" "rg" {
   location = var.location
   name     = var.rgHubName
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
-locals {
-  jumpbox_nsg_rules = {}
-  #   "rule01" = {
-  #     name                       = "AllowRDPInBound"
-  #     access                     = "Allow"
-  #     destination_address_prefix = "*"
-  #     destination_port_range     = "3389"
-  #     direction                  = "Inbound"
-  #     priority                   = 100
-  #     protocol                   = "Tcp"
-  #     source_address_prefix      = "*"
-  #     source_port_range          = "*"
-  #   }
-  #   rule02 = {
-  #     name                       = "AllowSSHInBound"
-  #     access                     = "Allow"
-  #     destination_address_prefix = "*"
-  #     destination_port_range     = "22"
-  #     direction                  = "Inbound"
-  #     priority                   = 200
-  #     protocol                   = "Tcp"
-  #     source_address_prefix      = "*"
-  #     source_port_range          = "*"
-  #   }
-  # }
-}
 
 module "avm-nsg-default" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
@@ -44,6 +20,8 @@ module "avm-nsg-default" {
   name                = var.nsgHubDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-nsg-vm" {
@@ -53,6 +31,8 @@ module "avm-nsg-vm" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   security_rules      = local.jumpbox_nsg_rules
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-virtualnetwork" {
@@ -99,6 +79,8 @@ module "avm-res-network-virtualnetwork" {
     }
 
   }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "publicIpFW" {
@@ -110,6 +92,8 @@ module "publicIpFW" {
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = var.availabilityZones
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "publicIpFWMgmt" {
@@ -121,6 +105,8 @@ module "publicIpFWMgmt" {
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = var.availabilityZones
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "publicIpBastion" {
@@ -132,6 +118,8 @@ module "publicIpBastion" {
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = var.availabilityZones
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "firewall_policy" {
@@ -142,6 +130,8 @@ module "firewall_policy" {
   firewall_policy_dns = {
     proxy_enabled = true
   }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "rule_collection_group" {
@@ -295,6 +285,7 @@ module "avm-res-network-azurefirewall" {
     }
   ]
 
+  tags = azurerm_resource_group.rg.tags
 }
 
 # module "azure_bastion" {
@@ -335,5 +326,7 @@ module "avm-res-network-routetable" {
     }
   }
   depends_on = [azurerm_resource_group.rg]
+
+  tags = azurerm_resource_group.rg.tags
 }
 

@@ -649,3 +649,5 @@ terraform.rc
 terragrunt-debug.tfvars.json
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,terragrunt
+azure/terraform/aks-lz-accelerator/share-Emmanuel-pass-zip.rar
+azure/terraform/aks-lz-accelerator/share-Emmanuel.zip

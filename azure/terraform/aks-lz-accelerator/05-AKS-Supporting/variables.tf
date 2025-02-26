@@ -39,16 +39,21 @@ variable "deployingAllInOne" {
 }
 
 variable "speSubnetId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "dnszoneAkvId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "dnszoneAcrId" {
-  type = string
+  type    = string
   default = ""
+}
+
+variable "authorized_ips" {
+  type    = set(string)
+  default = []
 }

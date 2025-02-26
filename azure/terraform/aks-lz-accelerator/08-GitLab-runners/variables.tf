@@ -18,6 +18,21 @@ variable "vnetHubName" {
   default = "vnet-hub"
 }
 
+variable "acrName" {
+  type    = string
+  default = "acrlzti5y"
+}
+
+variable "akvName" {
+  type    = string
+  default = "akvlzti5y"
+}
+
+variable "aksName" {
+  type    = string
+  default = "akvlzti5y"
+}
+
 variable "deployingAllInOne" {
   type    = bool
   default = false
@@ -38,9 +53,9 @@ variable "gl_runner_admin_username" {
   default = "azureuser"
 }
 
-variable "gl_runner_admin_password" {
-  type = string
-}
+# variable "gl_runner_admin_password" {
+#   type = string
+# }
 
 variable "os_type" {
   type    = string
@@ -65,4 +80,20 @@ variable "source_image_reference" {
     sku       = "2025-datacenter-g2"
     version   = "latest"
   }
+}
+
+
+variable "acrId" {
+  type    = string
+  default = ""
+}
+
+variable "akvId" {
+  type    = string
+  default = ""
+}
+
+variable "aksId" {
+  type    = string
+  default = ""
 }

@@ -1,6 +1,3 @@
-
-
-
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
@@ -8,11 +5,29 @@ module "naming" {
   suffix  = ["gitlab"]
 }
 
+resource "random_password" "password" {
+  length  = 16
+  special = true
+  numeric = true
+  lower   = true
+  upper   = true
+}
+
+module "uai_mid_gitlab" {
+  source              = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
+  version             = "0.3.3"
+  name                = "uai-${module.naming.virtual_machine.name_unique}"
+  location            = var.location # data.azurerm_resource_group.rg.location
+  resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
+
+  tags = merge(var.base_tags, var.plan_tags)
+}
+
 module "jumpbox_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
   admin_username                     = var.gl_runner_admin_username
-  admin_password                     = var.gl_runner_admin_password
+  admin_password                     = random_password.password.result
   disable_password_authentication    = false
   enable_telemetry                   = false
   encryption_at_host_enabled         = true
@@ -41,9 +56,7 @@ module "jumpbox_vm" {
   }
 
   managed_identities = {
-    user_assigned_resource_ids = [
-      "/subscriptions/4c88693f-5cc9-4f30-9d1e-d58d4221cf25/resourceGroups/rg-use2-391575-s3-akswincont-avm-lz/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai-lz-nih2"
-    ]
+    user_assigned_resource_ids = [module.uai_mid_gitlab.resource_id]
   }
 
   os_disk = {
@@ -58,5 +71,24 @@ module "jumpbox_vm" {
   #   version   = "latest"
   # }
   source_image_reference = var.source_image_reference
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
+resource "azurerm_key_vault_secret" "this" {
+  name         = "GitlabRunnerAdminPassword"
+  value        = random_password.password.result
+  key_vault_id = local.akvId
+}
+
+resource "azurerm_role_assignment" "acrpush_role_assignment" {
+  scope                = local.acrId
+  role_definition_name = "ACrPush"
+  principal_id         = module.uai_mid_gitlab.principal_id
+}
+
+resource "azurerm_role_assignment" "aksrbacclusteradmin_role_assignment" {
+  scope                = local.aksId
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = module.uai_mid_gitlab.principal_id
+}

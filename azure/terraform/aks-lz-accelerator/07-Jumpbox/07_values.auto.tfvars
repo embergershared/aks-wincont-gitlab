@@ -1,4 +1,4 @@
-# values.auto.tfvars
+# 07_values.auto.tfvars
 
 plan_tags = {
   Plan = "07-Jumpbox"

@@ -66,17 +66,17 @@ Set-TimeZone -Name "Eastern Standard Time"
 
 # Install Docker for Windows containers
 ## Optionally enable required Windows features if needed
-
+## Require Restart
 Enable-WindowsOptionalFeature -Online -FeatureName containers –All
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
+#Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
 
-curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip 
+curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\
 [Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\docker", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 dockerd --register-service
 Start-Service docker
-docker run hello-world
+#docker run hello-world
 
 # Note:
 # - should solve the need for: `Docker Desktop` / Right-click / `switch to windows containers`

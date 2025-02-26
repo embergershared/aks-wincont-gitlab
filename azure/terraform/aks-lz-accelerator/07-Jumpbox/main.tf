@@ -1,6 +1,3 @@
-
-
-
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
@@ -53,5 +50,7 @@ module "jumpbox_vm" {
   # }
 
   source_image_reference = var.source_image_reference
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 

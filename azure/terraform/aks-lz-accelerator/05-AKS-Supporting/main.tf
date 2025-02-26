@@ -1,5 +1,3 @@
-
-
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
@@ -21,6 +19,8 @@ module "avm-res-containerregistry-registry" {
       subnet_resource_id            = local.speSubnetId
     }
   }
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 module "avm-res-keyvault-vault" {
@@ -37,4 +37,6 @@ module "avm-res-keyvault-vault" {
       subnet_resource_id            = local.speSubnetId
     }
   }
+
+  tags = merge(var.base_tags, var.plan_tags)
 }

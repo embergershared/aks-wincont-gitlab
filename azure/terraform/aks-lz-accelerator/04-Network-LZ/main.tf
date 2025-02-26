@@ -1,7 +1,3 @@
-
-
-
-
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
@@ -13,6 +9,8 @@ module "naming" {
 resource "azurerm_resource_group" "rg" {
   location = var.location
   name     = var.rgLzName
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 module "avm-res-network-routetable" {
@@ -31,44 +29,8 @@ module "avm-res-network-routetable" {
       next_hop_in_ip_address = local.firewallPrivateIp
     }
   }
-}
 
-locals {
-  appgw_nsg_rules = {
-    "rule01" = {
-      name                       = "Allow443InBound"
-      access                     = "Allow"
-      destination_address_prefix = "*"
-      destination_port_range     = "443"
-      direction                  = "Inbound"
-      priority                   = 100
-      protocol                   = "Tcp"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-    }
-    "rule02" = {
-      name                       = "AllowControlPlaneV2SKU"
-      access                     = "Allow"
-      destination_address_prefix = "*"
-      destination_port_ranges    = ["65200-65535"]
-      direction                  = "Inbound"
-      priority                   = 200
-      protocol                   = "Tcp"
-      source_address_prefix      = "GatewayManager"
-      source_port_range          = "*"
-    }
-    "rule03" = {
-      name                       = "Allow80InBound"
-      access                     = "Allow"
-      destination_address_prefix = "*"
-      destination_port_ranges    = ["80"]
-      direction                  = "Inbound"
-      priority                   = 300
-      protocol                   = "Tcp"
-      source_address_prefix      = "*"
-      source_port_range          = "*"
-    }
-  }
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-nsg-default" {
@@ -77,6 +39,8 @@ module "avm-nsg-default" {
   name                = var.nsgLzDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-nsg-appgw" {
@@ -86,6 +50,8 @@ module "avm-nsg-appgw" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   security_rules      = local.appgw_nsg_rules
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-vnet" {
@@ -111,6 +77,8 @@ module "avm-res-network-vnet" {
       }
     }
   }
+
+  tags = azurerm_resource_group.rg.tags
 }
 module "avm-res-network-vnet-aks-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
@@ -203,19 +171,6 @@ module "avm-res-network-vnet-peering" {
   reverse_use_remote_gateways          = false
 }
 
-locals {
-  domain_name = {
-    akv               = "privatelink.vaultcore.azure.net",
-    acr               = "privatelink.azurecr.io",
-    aks               = "azmk8s.io"
-    sql               = "privatelink.database.windows.net"
-    contoso           = "private.contoso.com"
-    AzureUSGovernment = ".cx.aks.containerservice.azure.us"
-    AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
-    AzureGermanCloud  = "" //TODO: what is the correct value here?
-  }
-}
-
 module "avm-res-network-privatednszone-aks" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
@@ -226,7 +181,10 @@ module "avm-res-network-privatednszone-aks" {
       vnetlinkname     = "vlink-ak"
       vnetid           = local.vnetHubId
       autoregistration = false
-  } }
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-privatednszone-sql" {
@@ -239,7 +197,10 @@ module "avm-res-network-privatednszone-sql" {
       vnetlinkname     = "vlink-sql"
       vnetid           = local.vnetHubId
       autoregistration = false
-  } }
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-privatednszone-akv" {
@@ -252,8 +213,10 @@ module "avm-res-network-privatednszone-akv" {
       vnetlinkname     = "vlink-akv"
       vnetid           = local.vnetHubId
       autoregistration = false
-  } }
+    }
+  }
 
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-privatednszone-acr" {
@@ -266,7 +229,10 @@ module "avm-res-network-privatednszone-acr" {
       vnetlinkname     = "vlink-acr"
       vnetid           = local.vnetHubId
       autoregistration = false
-  } }
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
 module "avm-res-network-privatednszone-contoso" {
@@ -279,9 +245,13 @@ module "avm-res-network-privatednszone-contoso" {
       vnetlinkname     = "vlink-contoso"
       vnetid           = local.vnetHubId
       autoregistration = false
-  } }
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
 }
 
+/*
 module "avm-res-network-appgw" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
@@ -372,6 +342,8 @@ module "avm-res-network-appgw" {
 
   }
   zones = ["1", "2", "3"]
+
+  tags = azurerm_resource_group.rg.tags
 
   depends_on = [module.avm-res-network-vnet-appgw-subnet.resource]
 }

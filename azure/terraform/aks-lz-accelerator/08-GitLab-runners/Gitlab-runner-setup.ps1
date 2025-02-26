@@ -78,6 +78,9 @@ dockerd --register-service
 Start-Service docker
 docker run hello-world
 
+# Note:
+# - should solve the need for: `Docker Desktop` / Right-click / `switch to windows containers`
+# - May also save the use of this: `& 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchDaemon -SwitchWindowsEngine`
 
 # Install GitLab Runner
 

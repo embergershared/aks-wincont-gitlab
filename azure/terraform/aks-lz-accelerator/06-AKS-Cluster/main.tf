@@ -1,5 +1,3 @@
-
-
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
@@ -12,6 +10,8 @@ module "avm-res-managedidentity-userassignedidentity" {
   name                = module.naming.user_assigned_identity.name_unique
   location            = var.location # data.azurerm_resource_group.rg.location
   resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_role_assignment" "role-assignment-dnszone" {
@@ -37,6 +37,8 @@ module "avm-res-operationalinsights-workspace" {
   log_analytics_workspace_identity = {
     type = "SystemAssigned"
   }
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_kubernetes_cluster" "aks-cluster" {
@@ -55,8 +57,6 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   automatic_channel_upgrade         = "patch"
   role_based_access_control_enabled = true
   http_application_routing_enabled  = true
-
-
 
   web_app_routing {
     dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
@@ -113,6 +113,8 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   lifecycle {
     ignore_changes = [default_node_pool.0.upgrade_settings]
   }
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
@@ -129,6 +131,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   mode                  = "User"
   vnet_subnet_id        = local.snetAksId
   zones                 = ["1", "3"] # zones = ["1", "2", "3"]
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "win_nodepool" {
@@ -145,6 +149,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "win_nodepool" {
   mode                = "User"
   vnet_subnet_id      = local.snetAksId
   zones               = ["1", "3"] # zones = ["1", "2", "3"]
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {

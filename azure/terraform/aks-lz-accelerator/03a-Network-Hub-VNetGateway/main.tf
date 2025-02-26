@@ -15,6 +15,8 @@ module "publicIpVGW" {
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = var.availabilityZones
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 # module "vgw" {
@@ -58,6 +60,8 @@ resource "azurerm_virtual_network_gateway" "vgw" {
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = local.gatewaySubnetId
   }
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_local_network_gateway" "lgw" {
@@ -66,6 +70,8 @@ resource "azurerm_local_network_gateway" "lgw" {
   location            = var.location
   gateway_fqdn        = var.localNetworkGatewayFqdn
   address_space       = [var.localNetworkGatewayAddressSpace]
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 resource "azurerm_virtual_network_gateway_connection" "vgw_connection" {
@@ -76,4 +82,6 @@ resource "azurerm_virtual_network_gateway_connection" "vgw_connection" {
   virtual_network_gateway_id = azurerm_virtual_network_gateway.vgw.id
   local_network_gateway_id   = azurerm_local_network_gateway.lgw.id
   shared_key                 = var.sharedKey
+
+  tags = merge(var.base_tags, var.plan_tags)
 }

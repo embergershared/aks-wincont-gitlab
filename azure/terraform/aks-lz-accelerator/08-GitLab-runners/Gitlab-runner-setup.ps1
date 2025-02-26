@@ -1,3 +1,7 @@
+param(
+  [Parameter(Mandatory = $true)][string] $GitLabRunnerToken
+)
+
 # Install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -34,7 +38,8 @@ $gl_runner_packages = @(
   "sysinternals",
   "telnet",
   "7zip",
-  "notepadplusplus"
+  "notepadplusplus",
+  "vscode"
   # "argocd-cli",
   # "azure-data-studio",
   # "bind-toolsonly",
@@ -56,7 +61,6 @@ $gl_runner_packages = @(
   # "nerd-fonts-firamono",
   # "nerd-fonts-jetbrainsmono",
   # "nodejs" # 'nodejs-lts --version="20.18.0"'
-  # "vscode",
   # "winscp"
 )
 Install-ChocoPackage -Packages $gl_runner_packages
@@ -65,10 +69,8 @@ Install-ChocoPackage -Packages $gl_runner_packages
 Set-TimeZone -Name "Eastern Standard Time"
 
 # Install Docker for Windows containers
-## Optionally enable required Windows features if needed
+Enable-WindowsOptionalFeature -Online -FeatureName containers -All -NoRestart
 ## Require Restart
-Enable-WindowsOptionalFeature -Online -FeatureName containers –All
-#Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
 
 curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\
@@ -83,7 +85,6 @@ Start-Service docker
 # - May also save the use of this: `& 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchDaemon -SwitchWindowsEngine`
 
 # Install GitLab Runner
-
 New-Item -Path 'C:\GitLab-Runner' -ItemType Directory
 cd 'C:\GitLab-Runner'
 
@@ -95,6 +96,8 @@ Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/
 .\gitlab-runner.exe start
 
 # Register GitLab Runner
-$TOKEN = ""
-.\gitlab-runner.exe register  --url https://gitlab.com  --token $TOKEN
+$TOKEN = $GitLabRunnerToken
+.\gitlab-runner.exe register --url https://gitlab.com --token $TOKEN --executor "shell" --non-interactive --description "hww poc windows runner"
 
+# Restart the machine
+Restart-Computer -Force

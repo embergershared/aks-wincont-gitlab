@@ -97,3 +97,9 @@ variable "aksId" {
   type    = string
   default = ""
 }
+
+
+variable "gitlab_runner_token" {
+  type      = string
+  sensitive = true
+}

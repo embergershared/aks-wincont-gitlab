@@ -23,7 +23,7 @@ module "uai_mid_gitlab" {
   tags = merge(var.base_tags, var.plan_tags)
 }
 
-module "jumpbox_vm" {
+module "gitlab_runner_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
   admin_username                     = var.gl_runner_admin_username
@@ -73,6 +73,20 @@ module "jumpbox_vm" {
   source_image_reference = var.source_image_reference
 
   tags = merge(var.base_tags, var.plan_tags)
+}
+
+resource "azurerm_virtual_machine_extension" "glrunner_setup" {
+  name                 = "glrunner_setup"
+  virtual_machine_id   = module.gitlab_runner_vm.resource_id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.9"
+
+  protected_settings = <<SETTINGS
+  {    
+    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.gl_runner_script.rendered)}')) | Out-File -filepath Gitlab-runner-setup.ps1\" && powershell -ExecutionPolicy Unrestricted -File Gitlab-runner-setup.ps1 -GitLabRunnerToken ${data.template_file.gl_runner_script.vars.GitLabRunnerToken}"
+  }
+  SETTINGS
 }
 
 resource "azurerm_key_vault_secret" "this" {

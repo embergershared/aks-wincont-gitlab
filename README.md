@@ -19,3 +19,7 @@ Proof of Concept to run a 3-tier Windows containers app in Azure, Deployed with 
 [Application Migration Workshop](https://github.com/ivegamsft/AppMigrationWorkshop)
   
 [dceu18-windows-identity](https://github.com/ivegamsft/dceu18-windows-identity)
+
+### Gitlab.com project
+
+[hww](https://gitlab.com/southoutsteam/hww)

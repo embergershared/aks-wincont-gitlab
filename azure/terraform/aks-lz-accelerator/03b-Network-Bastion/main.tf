@@ -15,6 +15,8 @@ module "publicIpBastion" {
   allocation_method   = "Static"
   sku                 = "Standard"
   zones               = var.availabilityZones
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
 module "azure_bastion" {
@@ -38,4 +40,5 @@ module "azure_bastion" {
   tunneling_enabled      = true
   kerberos_enabled       = false
 
+  tags = merge(var.base_tags, var.plan_tags)
 }

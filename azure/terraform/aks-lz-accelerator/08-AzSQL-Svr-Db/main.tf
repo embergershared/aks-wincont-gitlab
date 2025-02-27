@@ -26,7 +26,7 @@ module "avm-res-managedidentity-userassignedidentity" {
 }
 
 resource "azurerm_key_vault_secret" "az_sql_pwd_secret" {
-  name         = "AzSQLServerPassword"
+  name         = "AzSql-Server-Password"
   value        = random_password.sql_password.result
   key_vault_id = local.akvId
 

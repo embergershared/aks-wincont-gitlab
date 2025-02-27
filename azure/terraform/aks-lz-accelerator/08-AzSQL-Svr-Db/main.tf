@@ -21,15 +21,19 @@ module "avm-res-managedidentity-userassignedidentity" {
   name                = "uai-${module.naming.sql_server.name_unique}"
   location            = var.location # data.azurerm_resource_group.rg.location
   resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
-resource "azurerm_key_vault_secret" "sql_pwd_secret" {
+resource "azurerm_key_vault_secret" "az_sql_pwd_secret" {
   name         = "AzSQLServerPassword"
   value        = random_password.sql_password.result
   key_vault_id = local.akvId
+
+  tags = merge(var.base_tags, var.plan_tags)
 }
 
-/*
+
 module "sql_server" {
   source           = "Azure/avm-res-sql-server/azurerm"
   enable_telemetry = false
@@ -64,4 +68,16 @@ module "sql_server" {
     }
   )
 }
+
+# Connection strings
+resource "azurerm_key_vault_secret" "az_sql_conn_string" {
+  for_each = local.databases
+
+  name         = replace("AzSql-Db-ConnectionString-${each.value.name}", "_", "-")
+  value        = "Server=tcp:${module.naming.sql_server.name_unique}.database.windows.net,1433;Initial Catalog=${each.value.name};Authentication=Active Directory Managed Identity;User Id=${module.avm-res-managedidentity-userassignedidentity.client_id};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  key_vault_id = local.akvId
+
+  tags = merge(var.base_tags, var.plan_tags)
+}
+
 #*/

@@ -24,7 +24,7 @@ az network bastion rdp --name "snap-hub-sysv" --resource-group "rg-use2-391575-s
 Enable-WindowsOptionalFeature -Online -FeatureName containers –All
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
 
-curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip 
+curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\
 [Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\docker", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
@@ -48,3 +48,15 @@ Docker Desktop > `switch to windows containers`
   - AKS RBAC cluster admin
 
 ## Restart gitlab-runner NT service
+
+
+## Restore SQL Database
+$msi_user_id=""
+
+Export
+SqlPackage /Action:Export /TargetFile:"Classifieds.BACPAC" /SourceConnectionString:"Server=tcp:sql-lz-nih2.database.windows.net,1433;Initial Catalog=Classifieds;Authentication=Active Directory Managed Identity;User Id=$msi_user_id;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+SqlPackage /Action:Export /TargetFile:"TimeTracker.BACPAC" /SourceConnectionString:"Server=tcp:sql-lz-nih2.database.windows.net,1433;Initial Catalog=TimeTracker;Authentication=Active Directory Managed Identity;User Id=$msi_user_id;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+Import
+SqlPackage /Action:Import /SourceFile:"Classifieds.BACPAC" /TargetConnectionString:"Server=tcp:sql-lz-nih2.database.windows.net,1433;Initial Catalog=Classifieds;Authentication=Active Directory Managed Identity;User Id=$msi_user_id;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+SqlPackage /Action:Import /SourceFile:"TimeTracker.BACPAC" /TargetConnectionString:"Server=tcp:sql-lz-nih2.database.windows.net,1433;Initial Catalog=TimeTracker;Authentication=Active Directory Managed Identity;User Id=$msi_user_id;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"

@@ -73,7 +73,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     os_disk_size_gb              = 30
     os_sku                       = "Ubuntu"
     min_count                    = 1
-    max_count                    = 3
+    max_count                    = 2
     enable_auto_scaling          = true
     max_pods                     = 110
     only_critical_addons_enabled = true

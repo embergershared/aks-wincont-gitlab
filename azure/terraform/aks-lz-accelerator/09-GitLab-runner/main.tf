@@ -2,7 +2,8 @@
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
-  suffix  = ["gitlab"]
+
+  suffix = ["gitlab"]
 }
 
 resource "random_password" "vm_password" {
@@ -60,7 +61,8 @@ module "gitlab_runner_vm" {
 
   managed_identities = {
     user_assigned_resource_ids = [
-      module.uai_mid_gitlab.resource_id
+      module.uai_mid_gitlab.resource_id,
+      local.sql_server_uai_id
     ]
   }
 
@@ -95,7 +97,7 @@ resource "azurerm_virtual_machine_extension" "glrunner_setup" {
 }
 
 resource "azurerm_key_vault_secret" "this" {
-  name         = "GitlabRunnerAdminPassword"
+  name         = "GitLabRunner-VM-Admin-Password"
   value        = random_password.vm_password.result
   key_vault_id = local.akvId
 }

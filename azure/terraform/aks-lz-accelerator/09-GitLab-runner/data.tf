@@ -29,10 +29,18 @@ data "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.rgLzName
 }
 
-
 data "template_file" "gl_runner_script" {
   template = file("Gitlab-runner-setup.ps1")
   vars = {
     GitLabRunnerToken = "${var.gitlab_runner_token}"
+  }
+}
+
+data "azurerm_resources" "uai_s" {
+  resource_group_name = var.rgLzName
+  type                = "Microsoft.ManagedIdentity/userAssignedIdentities"
+
+  required_tags = {
+    Plan = "08-AzSQL-Svr-Db"
   }
 }

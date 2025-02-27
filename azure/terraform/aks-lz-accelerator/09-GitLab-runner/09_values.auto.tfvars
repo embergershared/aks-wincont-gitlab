@@ -1,4 +1,4 @@
-# 08_values.auto.tfvars
+# 09_values.auto.tfvars
 
 plan_tags = {
   Plan = "09-GitLab-runner"

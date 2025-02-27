@@ -41,7 +41,6 @@ $gl_runner_packages = @(
   "notepadplusplus",
   "vscode".
   "sqlpackage",
-  "sqlcmd"
   # "argocd-cli",
   # "azure-data-studio",
   # "bind-toolsonly",
@@ -64,6 +63,7 @@ $gl_runner_packages = @(
   # "nerd-fonts-jetbrainsmono",
   # "nodejs" # 'nodejs-lts --version="20.18.0"'
   # "winscp"
+  "sqlcmd"
 )
 Install-ChocoPackage -Packages $gl_runner_packages
 

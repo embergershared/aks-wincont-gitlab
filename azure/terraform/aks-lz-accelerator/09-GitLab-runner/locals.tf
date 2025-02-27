@@ -5,4 +5,6 @@ locals {
   acrId = var.deployingAllInOne == true ? var.acrId : data.azurerm_container_registry.acr.0.id
   akvId = var.deployingAllInOne == true ? var.akvId : data.azurerm_key_vault.akv.0.id
   aksId = var.deployingAllInOne == true ? var.aksId : data.azurerm_kubernetes_cluster.aks.0.id
+
+  sql_server_uai_id = data.azurerm_resources.uai_s.resources.0.id
 }

@@ -1,4 +1,4 @@
-# 08_common_values.auto.tfvars
+# 09_common_values.auto.tfvars
 
 location = "eastus2"
 base_tags = {

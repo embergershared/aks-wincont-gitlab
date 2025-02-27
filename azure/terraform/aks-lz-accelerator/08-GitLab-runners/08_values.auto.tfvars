@@ -1,7 +1,7 @@
 # 08_values.auto.tfvars
 
 plan_tags = {
-  Plan = "07-Jumpbox"
+  Plan = "08-GitLab-runners"
 }
 
 rgLzName   = "rg-use2-391575-s3-akswincont-avm-lz"

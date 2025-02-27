@@ -5,7 +5,7 @@ module "naming" {
   suffix  = ["gitlab"]
 }
 
-resource "random_password" "password" {
+resource "random_password" "vm_password" {
   length  = 16
   special = true
   numeric = true
@@ -27,7 +27,7 @@ module "gitlab_runner_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
   admin_username                     = var.gl_runner_admin_username
-  admin_password                     = random_password.password.result
+  admin_password                     = random_password.vm_password.result
   disable_password_authentication    = false
   enable_telemetry                   = false
   encryption_at_host_enabled         = true
@@ -91,7 +91,7 @@ resource "azurerm_virtual_machine_extension" "glrunner_setup" {
 
 resource "azurerm_key_vault_secret" "this" {
   name         = "GitlabRunnerAdminPassword"
-  value        = random_password.password.result
+  value        = random_password.vm_password.result
   key_vault_id = local.akvId
 }
 

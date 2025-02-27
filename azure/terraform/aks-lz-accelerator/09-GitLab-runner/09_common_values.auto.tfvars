@@ -5,6 +5,7 @@ base_tags = {
   Repo = "embergershared/aks-wincont-gitlab"
 }
 
+rgHubName  = "rg-use2-391575-s3-akswincont-avm-hub"
 rgLzName   = "rg-use2-391575-s3-akswincont-avm-lz"
 vnetLzName = "vnet-lz"
 acrName    = "acrakslzaccel234"

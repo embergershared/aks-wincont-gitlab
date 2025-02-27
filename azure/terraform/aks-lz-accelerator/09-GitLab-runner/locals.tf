@@ -6,5 +6,7 @@ locals {
   akvId = var.deployingAllInOne == true ? var.akvId : data.azurerm_key_vault.akv.0.id
   aksId = var.deployingAllInOne == true ? var.aksId : data.azurerm_kubernetes_cluster.aks.0.id
 
-  sql_server_uai_id = data.azurerm_resources.uai_s.resources.0.id
+  sql_server_uai_id   = data.azurerm_resources.uai_s.resources.0.id
+  hub_bastion_name    = data.azurerm_resources.hub_bastion_s.resources.0.name
+  hub_bastion_rg_name = data.azurerm_resources.hub_bastion_s.resources.0.resource_group_name
 }

@@ -44,3 +44,8 @@ data "azurerm_resources" "uai_s" {
     Plan = "08-AzSQL-Svr-Db"
   }
 }
+
+data "azurerm_resources" "hub_bastion_s" {
+  resource_group_name = var.rgHubName
+  type                = "Microsoft.Network/bastionHosts"
+}

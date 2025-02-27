@@ -1,3 +1,8 @@
+variable "rgHubName" {
+  type    = string
+  default = "AksTerra-AVM-Hub-RG"
+}
+
 variable "rgLzName" {
   type    = string
   default = "AksTerra-AVM-LZ-RG"

@@ -7,8 +7,10 @@ module "naming" {
 }
 
 module "publicIpVGW" {
-  source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.2.0"
+  source           = "Azure/avm-res-network-publicipaddress/azurerm"
+  version          = "0.2.0"
+  enable_telemetry = false
+
   resource_group_name = var.rgHubName
   name                = "pip-azvgw"
   location            = var.location

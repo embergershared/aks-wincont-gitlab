@@ -1,12 +1,15 @@
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
-  suffix  = ["lz"]
+
+  suffix = ["lz"]
 }
 
 module "avm-res-managedidentity-userassignedidentity" {
-  source              = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
-  version             = "0.3.3"
+  source           = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
+  version          = "0.3.3"
+  enable_telemetry = false
+
   name                = module.naming.user_assigned_identity.name_unique
   location            = var.location # data.azurerm_resource_group.rg.location
   resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
@@ -15,20 +18,24 @@ module "avm-res-managedidentity-userassignedidentity" {
 }
 
 resource "azurerm_role_assignment" "role-assignment-dnszone" {
-  scope                = local.dnszoneAksId # data.azurerm_private_dns_zone.dnszone-aks.id
-  role_definition_name = "Private DNS Zone Contributor"
-  principal_id         = module.avm-res-managedidentity-userassignedidentity.principal_id
+  scope                            = local.dnszoneAksId # data.azurerm_private_dns_zone.dnszone-aks.id
+  role_definition_name             = "Private DNS Zone Contributor"
+  principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
+  skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "role-assignment-vnetcontrib" {
-  scope                = local.vnetLzId # data.azurerm_virtual_network.vnet-lz.id
-  role_definition_name = "Network Contributor"
-  principal_id         = module.avm-res-managedidentity-userassignedidentity.principal_id
+  scope                            = local.vnetLzId # data.azurerm_virtual_network.vnet-lz.id
+  role_definition_name             = "Network Contributor"
+  principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
+  skip_service_principal_aad_check = true
 }
 
 module "avm-res-operationalinsights-workspace" {
-  source                                    = "Azure/avm-res-operationalinsights-workspace/azurerm"
-  version                                   = "0.4.1"
+  source           = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version          = "0.4.1"
+  enable_telemetry = false
+
   name                                      = module.naming.log_analytics_workspace.name_unique
   resource_group_name                       = var.rgLzName # data.azurerm_resource_group.rg.name
   location                                  = var.location # data.azurerm_resource_group.rg.location

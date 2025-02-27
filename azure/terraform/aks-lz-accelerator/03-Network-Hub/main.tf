@@ -15,8 +15,9 @@ resource "azurerm_resource_group" "rg" {
 
 
 module "avm-nsg-default" {
-  source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version = "0.2.0"
+
   name                = var.nsgHubDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -25,8 +26,9 @@ module "avm-nsg-default" {
 }
 
 module "avm-nsg-vm" {
-  source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version = "0.2.0"
+
   name                = var.nsgVMName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -36,8 +38,10 @@ module "avm-nsg-vm" {
 }
 
 module "avm-res-network-virtualnetwork" {
-  source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.2.4"
+  source           = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version          = "0.2.4"
+  enable_telemetry = false
+
   # insert the 3 required variables here
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.hubVNETaddPrefixes]
@@ -84,8 +88,10 @@ module "avm-res-network-virtualnetwork" {
 }
 
 module "publicIpFW" {
-  source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-publicipaddress/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-azfw"
   location            = azurerm_resource_group.rg.location
@@ -97,8 +103,10 @@ module "publicIpFW" {
 }
 
 module "publicIpFWMgmt" {
-  source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-publicipaddress/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-azfw-management"
   location            = azurerm_resource_group.rg.location
@@ -110,8 +118,10 @@ module "publicIpFWMgmt" {
 }
 
 module "publicIpBastion" {
-  source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-publicipaddress/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-bastion"
   location            = azurerm_resource_group.rg.location
@@ -123,8 +133,10 @@ module "publicIpBastion" {
 }
 
 module "firewall_policy" {
-  source              = "Azure/avm-res-network-firewallpolicy/azurerm"
-  name                = "azureFirewallPolicy"
+  source           = "Azure/avm-res-network-firewallpolicy/azurerm"
+  name             = "azureFirewallPolicy"
+  enable_telemetry = false
+
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   firewall_policy_dns = {
@@ -135,7 +147,8 @@ module "firewall_policy" {
 }
 
 module "rule_collection_group" {
-  source                                                   = "Azure/avm-res-network-firewallpolicy/azurerm//modules/rule_collection_groups"
+  source = "Azure/avm-res-network-firewallpolicy/azurerm//modules/rule_collection_groups"
+
   firewall_policy_rule_collection_group_firewall_policy_id = module.firewall_policy.resource.id
   firewall_policy_rule_collection_group_name               = "NetworkRuleCollectionGroup"
   firewall_policy_rule_collection_group_priority           = 400
@@ -268,8 +281,10 @@ module "rule_collection_group" {
 }
 
 module "avm-res-network-azurefirewall" {
-  source              = "Azure/avm-res-network-azurefirewall/azurerm"
-  version             = "0.2.0"
+  source           = "Azure/avm-res-network-azurefirewall/azurerm"
+  version          = "0.2.0"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = "azureFirewall"
   location            = azurerm_resource_group.rg.location
@@ -291,6 +306,7 @@ module "avm-res-network-azurefirewall" {
 # module "azure_bastion" {
 #   source  = "Azure/avm-res-network-bastionhost/azurerm"
 #   version = "0.4.0"
+#   enable_telemetry = false
 
 #   name                = "bastion"
 #   resource_group_name = azurerm_resource_group.rg.name
@@ -311,8 +327,10 @@ module "avm-res-network-azurefirewall" {
 # }
 
 module "avm-res-network-routetable" {
-  source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.3.1"
+  source           = "Azure/avm-res-network-routetable/azurerm"
+  version          = "0.3.1"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtHubName
   location            = azurerm_resource_group.rg.location

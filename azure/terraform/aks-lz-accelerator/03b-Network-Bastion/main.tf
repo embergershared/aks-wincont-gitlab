@@ -1,4 +1,3 @@
-
 # rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
@@ -7,8 +6,10 @@ module "naming" {
 }
 
 module "publicIpBastion" {
-  source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.2.0"
+  source           = "Azure/avm-res-network-publicipaddress/azurerm"
+  version          = "0.2.0"
+  enable_telemetry = false
+
   resource_group_name = var.rgHubName
   name                = "pip-azbastion"
   location            = var.location
@@ -20,9 +21,9 @@ module "publicIpBastion" {
 }
 
 module "azure_bastion" {
-  source = "Azure/avm-res-network-bastionhost/azurerm"
+  source           = "Azure/avm-res-network-bastionhost/azurerm"
+  enable_telemetry = false
 
-  enable_telemetry    = false
   name                = module.naming.bastion_host.name_unique
   resource_group_name = var.rgHubName
   location            = var.location

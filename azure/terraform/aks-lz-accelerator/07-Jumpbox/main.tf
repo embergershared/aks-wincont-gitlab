@@ -8,10 +8,11 @@ module "naming" {
 module "jumpbox_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
+  enable_telemetry = false
+
   admin_username                     = var.jumpbox_admin_username
   admin_password                     = var.jumpbox_admin_password
   disable_password_authentication    = false
-  enable_telemetry                   = false
   encryption_at_host_enabled         = true
   generate_admin_password_or_ssh_key = false
   location                           = var.location

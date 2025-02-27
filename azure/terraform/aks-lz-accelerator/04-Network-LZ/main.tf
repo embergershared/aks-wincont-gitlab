@@ -14,8 +14,10 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "avm-res-network-routetable" {
-  source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.3.1"
+  source           = "Azure/avm-res-network-routetable/azurerm"
+  version          = "0.3.1"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtLzName
   location            = azurerm_resource_group.rg.location
@@ -34,8 +36,10 @@ module "avm-res-network-routetable" {
 }
 
 module "avm-nsg-default" {
-  source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  source           = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version          = "0.2.0"
+  enable_telemetry = false
+
   name                = var.nsgLzDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -44,8 +48,10 @@ module "avm-nsg-default" {
 }
 
 module "avm-nsg-appgw" {
-  source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  source           = "Azure/avm-res-network-networksecuritygroup/azurerm"
+  version          = "0.2.0"
+  enable_telemetry = false
+
   name                = var.nsgAppGWName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -55,8 +61,10 @@ module "avm-nsg-appgw" {
 }
 
 module "avm-res-network-vnet" {
-  source              = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version             = "0.2.4"
+  source           = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version          = "0.2.4"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.spokeVNETaddPrefixes]
   location            = azurerm_resource_group.rg.location
@@ -83,7 +91,8 @@ module "avm-res-network-vnet" {
 module "avm-res-network-vnet-aks-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
-  name    = "snet-aks"
+
+  name = "snet-aks"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -101,7 +110,8 @@ module "avm-res-network-vnet-aks-subnet" {
 module "avm-res-network-vnet-appgw-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
-  name    = "snet-appgw"
+
+  name = "snet-appgw"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -116,7 +126,8 @@ module "avm-res-network-vnet-appgw-subnet" {
 module "avm-res-network-vnet-vm-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
-  name    = "snet-vm"
+
+  name = "snet-vm"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -134,7 +145,8 @@ module "avm-res-network-vnet-vm-subnet" {
 module "avm-res-network-vnet-spe-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
-  name    = "snet-spe"
+
+  name = "snet-spe"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -152,6 +164,7 @@ module "avm-res-network-vnet-spe-subnet" {
 module "avm-res-network-vnet-peering" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
   version = "0.2.4"
+
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -172,8 +185,10 @@ module "avm-res-network-vnet-peering" {
 }
 
 module "avm-res-network-privatednszone-aks" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = "privatelink.${var.location}.${local.domain_name.aks}"
   virtual_network_links = {
@@ -188,8 +203,10 @@ module "avm-res-network-privatednszone-aks" {
 }
 
 module "avm-res-network-privatednszone-sql" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.sql
   virtual_network_links = {
@@ -204,8 +221,10 @@ module "avm-res-network-privatednszone-sql" {
 }
 
 module "avm-res-network-privatednszone-akv" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.akv
   virtual_network_links = {
@@ -220,8 +239,10 @@ module "avm-res-network-privatednszone-akv" {
 }
 
 module "avm-res-network-privatednszone-acr" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.acr
   virtual_network_links = {
@@ -236,8 +257,10 @@ module "avm-res-network-privatednszone-acr" {
 }
 
 module "avm-res-network-privatednszone-contoso" {
-  source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.contoso
   virtual_network_links = {
@@ -255,6 +278,8 @@ module "avm-res-network-privatednszone-contoso" {
 module "avm-res-network-appgw" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
+  enable_telemetry = false
+
   resource_group_name = azurerm_resource_group.rg.name
   name                = "appgw"
   location            = azurerm_resource_group.rg.location

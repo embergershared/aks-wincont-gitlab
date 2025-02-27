@@ -1,12 +1,15 @@
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
-  suffix  = ["lz"]
+
+  suffix = ["lz"]
 }
 
 module "avm-res-containerregistry-registry" {
-  source                        = "Azure/avm-res-containerregistry-registry/azurerm"
-  version                       = "0.3.1"
+  source           = "Azure/avm-res-containerregistry-registry/azurerm"
+  version          = "0.3.1"
+  enable_telemetry = false
+
   name                          = var.acrName
   location                      = var.location
   resource_group_name           = var.rgLzName
@@ -24,8 +27,10 @@ module "avm-res-containerregistry-registry" {
 }
 
 module "avm-res-keyvault-vault" {
-  source                        = "Azure/avm-res-keyvault-vault/azurerm"
-  version                       = "0.9.1"
+  source           = "Azure/avm-res-keyvault-vault/azurerm"
+  version          = "0.9.1"
+  enable_telemetry = false
+
   name                          = var.akvName
   location                      = var.location
   resource_group_name           = var.rgLzName

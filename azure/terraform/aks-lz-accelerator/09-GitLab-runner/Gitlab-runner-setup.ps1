@@ -81,6 +81,8 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 dockerd --register-service
 Start-Service docker
 #docker run hello-world
+# Pull build images
+docker pull mcr.microsoft.com/dotnet/framework/aspnet:3.5-windowsservercore-ltsc2022
 
 # Note:
 # - should solve the need for: `Docker Desktop` / Right-click / `switch to windows containers`

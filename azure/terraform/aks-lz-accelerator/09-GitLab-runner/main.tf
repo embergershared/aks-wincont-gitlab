@@ -14,8 +14,10 @@ resource "random_password" "vm_password" {
 }
 
 module "uai_mid_gitlab" {
-  source              = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
-  version             = "0.3.3"
+  source           = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
+  version          = "0.3.3"
+  enable_telemetry = false
+
   name                = "uai-${module.naming.virtual_machine.name_unique}"
   location            = var.location # data.azurerm_resource_group.rg.location
   resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
@@ -26,10 +28,11 @@ module "uai_mid_gitlab" {
 module "gitlab_runner_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
+  enable_telemetry = false
+
   admin_username                     = var.gl_runner_admin_username
   admin_password                     = random_password.vm_password.result
   disable_password_authentication    = false
-  enable_telemetry                   = false
   encryption_at_host_enabled         = true
   generate_admin_password_or_ssh_key = false
   location                           = var.location
@@ -56,7 +59,9 @@ module "gitlab_runner_vm" {
   }
 
   managed_identities = {
-    user_assigned_resource_ids = [module.uai_mid_gitlab.resource_id]
+    user_assigned_resource_ids = [
+      module.uai_mid_gitlab.resource_id
+    ]
   }
 
   os_disk = {
@@ -96,13 +101,15 @@ resource "azurerm_key_vault_secret" "this" {
 }
 
 resource "azurerm_role_assignment" "acrpush_role_assignment" {
-  scope                = local.acrId
-  role_definition_name = "ACrPush"
-  principal_id         = module.uai_mid_gitlab.principal_id
+  scope                            = local.acrId
+  role_definition_name             = "ACrPush"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "aksrbacclusteradmin_role_assignment" {
-  scope                = local.aksId
-  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  principal_id         = module.uai_mid_gitlab.principal_id
+  scope                            = local.aksId
+  role_definition_name             = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
 }

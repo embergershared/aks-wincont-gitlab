@@ -24,29 +24,39 @@ variable "deployingAllInOne" {
 }
 
 variable "vnetLzId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "snetvmId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "speSubnetId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "dnszonesqlId" {
-  type = string
+  type    = string
   default = ""
 }
 
-variable sql_admin_username {
-  type = string
+variable "akvName" {
+  type    = string
+  default = "akvlzti5y"
+}
+
+variable "akvId" {
+  type    = string
+  default = ""
+}
+
+variable "sql_admin_username" {
+  type    = string
   default = "azsqladmin"
 }
-variable sql_admin_password {
-  type = string
-}
+# variable "sql_admin_password" {
+#   type = string
+# }

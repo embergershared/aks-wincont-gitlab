@@ -39,7 +39,9 @@ $gl_runner_packages = @(
   "telnet",
   "7zip",
   "notepadplusplus",
-  "vscode"
+  "vscode".
+  "sqlpackage",
+  "sqlcmd"
   # "argocd-cli",
   # "azure-data-studio",
   # "bind-toolsonly",

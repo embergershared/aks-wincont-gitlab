@@ -1,4 +1,9 @@
 locals {
+  # Existing resources extraction:
+  lz_vnet_name = [for v in data.azurerm_resources.lz_rg_resource_s.resources : v.name if v.type == "Microsoft.Network/virtualNetworks"]
+
+
+
   vnetLzId = var.deployingAllInOne == true ? var.vnetLzId : data.azurerm_virtual_network.vnet-lz.0.id
   snetvmId = var.deployingAllInOne == true ? var.snetvmId : data.azurerm_subnet.snet-vm.0.id
 

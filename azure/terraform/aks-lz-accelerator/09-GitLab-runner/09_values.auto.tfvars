@@ -4,11 +4,6 @@ plan_tags = {
   Plan = "09-GitLab-Runner"
 }
 
-rgLzName   = "rg-use2-391575-s3-akswincont-avm-lz"
-vnetLzName = "vnet-lz"
-
-gl_runner_admin_username = "glRunnerAdmin"
-
 os_type  = "Windows"
 sku_size = "Standard_F16s_v2"
 
@@ -18,3 +13,5 @@ source_image_reference = {
   sku       = "2025-datacenter-g2"
   version   = "latest"
 }
+
+gl_runner_admin_username = "glRunnerAdmin"

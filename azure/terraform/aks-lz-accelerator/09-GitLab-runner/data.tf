@@ -1,3 +1,8 @@
+data "azurerm_resources" "lz_rg_resource_s" {
+  resource_group_name = var.rgLzName
+}
+
+
 data "azurerm_virtual_network" "vnet-lz" {
   count               = var.deployingAllInOne == true ? 0 : 1
   name                = var.vnetLzName

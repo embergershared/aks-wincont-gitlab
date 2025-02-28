@@ -87,7 +87,6 @@ variable "source_image_reference" {
   }
 }
 
-
 variable "acrId" {
   type    = string
   default = ""
@@ -107,3 +106,7 @@ variable "gitlab_runner_token" {
   type      = string
   sensitive = true
 }
+
+variable "storage_account_name" {}
+variable "storage_account_fileshare_name" {}
+variable "storage_account_fileshare_access_key" {}

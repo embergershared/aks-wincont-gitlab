@@ -1,4 +1,4 @@
-# values.auto.tfvars
+# 03a_values.auto.tfvars
 
 rgHubName         = "rg-use2-391575-s3-akswincont-avm-hub"
 vnetHubName       = "vnet-use2-391575-s3-platform-vnet"

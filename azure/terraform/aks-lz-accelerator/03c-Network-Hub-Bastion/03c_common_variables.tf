@@ -1,4 +1,4 @@
-# 03_common_variables.tf
+# 03c_common_variables.tf
 
 variable "tenant_id" {}
 variable "subscription_id" {}

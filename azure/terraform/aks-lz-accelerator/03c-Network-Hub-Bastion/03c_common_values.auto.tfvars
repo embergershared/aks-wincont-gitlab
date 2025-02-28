@@ -1,4 +1,4 @@
-# 03a_common_values.auto.tfvars
+# 03c_common_values.auto.tfvars
 
 location = "eastus2"
 base_tags = {
@@ -8,5 +8,4 @@ base_tags = {
 rgHubName         = "rg-use2-391575-s3-akswincont-avm-hub"
 vnetHubName       = "vnet-use2-391575-s3-platform-vnet"
 availabilityZones = []
-
 

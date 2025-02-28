@@ -1,4 +1,4 @@
-# 03_common_values.auto.tfvars
+# 03a_common_values.auto.tfvars
 
 location = "eastus2"
 

@@ -3,5 +3,5 @@
 location = "eastus2"
 
 plan_tags = {
-  Plan = "02-EID"
+  Plan = "02-Entra-ID"
 }

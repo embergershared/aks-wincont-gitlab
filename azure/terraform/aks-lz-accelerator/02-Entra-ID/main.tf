@@ -53,4 +53,12 @@ resource "azurerm_storage_container" "this" {
   container_access_type = "private"
 }
 
+#------------------------------
+# - File share
+#------------------------------
+resource "azurerm_storage_share" "this" {
+  name               = "hww-poc-glrunner"
+  quota              = 1024
+  storage_account_id = azurerm_storage_account.this.id
+}
 #*/

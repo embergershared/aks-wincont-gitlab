@@ -52,13 +52,4 @@ resource "azurerm_storage_container" "this" {
   # Infrastructure Protection: Block Internet access and restrict network connectivity to the Storage account via the Storage firewall and access the data objects in the Storage account via Private Endpoint which secures all traffic between VNet and the storage account over a Private Link.
   container_access_type = "private"
 }
-
-#------------------------------
-# - File share
-#------------------------------
-resource "azurerm_storage_share" "this" {
-  name               = "hww-poc-glrunner"
-  quota              = 1024
-  storage_account_id = azurerm_storage_account.this.id
-}
 #*/

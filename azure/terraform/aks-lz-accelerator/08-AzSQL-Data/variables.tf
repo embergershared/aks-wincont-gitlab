@@ -60,3 +60,8 @@ variable "sql_admin_username" {
 # variable "sql_admin_password" {
 #   type = string
 # }
+
+variable "authorized_ips" {
+  type    = set(string)
+  default = []
+}

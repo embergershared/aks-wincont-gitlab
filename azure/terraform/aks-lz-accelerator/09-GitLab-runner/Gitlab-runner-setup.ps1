@@ -1,9 +1,14 @@
 param(
   [Parameter(Mandatory = $true)][string] $GitLabRunnerToken,
-  [Parameter(Mandatory = $true)][string] $StorageAccountName,
-  [Parameter(Mandatory = $true)][string] $StorageAccountFileShareName,
-  [Parameter(Mandatory = $true)][string] $StorageAccountFileShareAccessKey
+  [Parameter(Mandatory = $true)][string] $StAcctName,
+  [Parameter(Mandatory = $true)][string] $StShareName,
+  [Parameter(Mandatory = $true)][string] $StAcctAccessKey
 )
+
+$filePath = "C:\GitLab-Runner-setup_log.txt"
+New-Item -Path $filePath -ItemType File -Force
+Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner setup started"
+Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: GitLabRunnerToken=$GitLabRunnerToken, StAcctName=$StAcctName, StShareName=$StShareName, StAcctAccessKey=$StAcctAccessKey"
 
 # Install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -42,7 +47,7 @@ $gl_runner_packages = @(
   "telnet",
   "7zip",
   "notepadplusplus",
-  "vscode".
+  "vscode",
   "sqlpackage",
   # "argocd-cli",
   # "azure-data-studio",
@@ -84,8 +89,6 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 dockerd --register-service
 Start-Service docker
 #docker run hello-world
-# Pull build images
-docker pull mcr.microsoft.com/dotnet/framework/aspnet:3.5-windowsservercore-ltsc2022
 
 # Note:
 # - should solve the need for: `Docker Desktop` / Right-click / `switch to windows containers`
@@ -109,19 +112,6 @@ $TOKEN = $GitLabRunnerToken
 # Add additional entries to the PATH
 [Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-
-# Mount the Azure File Share
-$connectTestResult = Test-NetConnection -ComputerName $StorageAccountName.file.core.windows.net -Port 445
-if ($connectTestResult.TcpTestSucceeded) {
-  # Save the password so the drive will persist on reboot
-  cmd.exe /C "cmdkey /add:`"$StorageAccountName.file.core.windows.net`" /user:`"localhost\$StorageAccountName`" /pass:`"$StorageAccountFileShareAccessKey`""
-  # Mount the drive
-  New-PSDrive -Name Z -PSProvider FileSystem -Root "\\$StorageAccountName.file.core.windows.net\$StorageAccountFileShareName" -Persist
-}
-else {
-  Write-Error -Message "Unable to reach the Azure storage account via port 445. Check to make sure your organization or ISP is not blocking port 445, or use Azure P2S VPN, Azure S2S VPN, or Express Route to tunnel SMB traffic over a different port."
-}
-
 
 # Restart the machine
 Restart-Computer -Force

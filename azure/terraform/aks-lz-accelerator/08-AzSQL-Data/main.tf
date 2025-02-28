@@ -96,7 +96,7 @@ resource "azurerm_storage_account" "this" {
   large_file_share_enabled        = false
   nfsv3_enabled                   = false
   local_user_enabled              = false
-  shared_access_key_enabled       = false
+  shared_access_key_enabled       = true  # Enable to allow File share mounting on the GitLab Runner
   allow_nested_items_to_be_public = false # Disable anonymous public read access to containers and blobs
   https_traffic_only_enabled      = true  # Require secure transfer (HTTPS) to the storage account for REST API Operations
   min_tls_version                 = "TLS1_2"

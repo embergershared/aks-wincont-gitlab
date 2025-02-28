@@ -5,7 +5,6 @@ module "naming" {
 
   suffix = ["gitlab"]
 }
-
 resource "random_password" "vm_password" {
   length  = 16
   special = true
@@ -13,7 +12,6 @@ resource "random_password" "vm_password" {
   lower   = true
   upper   = true
 }
-
 module "uai_mid_gitlab" {
   source           = "Azure/avm-res-managedidentity-userassignedidentity/azurerm"
   version          = "0.3.3"
@@ -25,7 +23,6 @@ module "uai_mid_gitlab" {
 
   tags = merge(var.base_tags, var.plan_tags)
 }
-
 module "gitlab_runner_vm" {
   source = "Azure/avm-res-compute-virtualmachine/azurerm"
   #version = "0.17.0
@@ -81,6 +78,24 @@ module "gitlab_runner_vm" {
 
   tags = merge(var.base_tags, var.plan_tags)
 }
+resource "azurerm_key_vault_secret" "this" {
+  name         = "GitLabRunner-VM-Admin-Password"
+  value        = random_password.vm_password.result
+  key_vault_id = local.akvId
+}
+resource "azurerm_role_assignment" "acrpush_role_assignment" {
+  scope                            = local.acrId
+  role_definition_name             = "ACrPush"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
+}
+resource "azurerm_role_assignment" "aksrbacclusteradmin_role_assignment" {
+  scope                            = local.aksId
+  role_definition_name             = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
+}
+
 
 resource "azurerm_virtual_machine_extension" "glrunner_setup" {
   name                 = "glrunner_setup"
@@ -90,28 +105,13 @@ resource "azurerm_virtual_machine_extension" "glrunner_setup" {
   type_handler_version = "1.9"
 
   protected_settings = <<SETTINGS
-  {    
-    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.gl_runner_script.rendered)}')) | Out-File -filepath Gitlab-runner-setup.ps1\" && powershell -ExecutionPolicy Unrestricted -File Gitlab-runner-setup.ps1 -GitLabRunnerToken ${data.template_file.gl_runner_script.vars.GitLabRunnerToken}"
+  {
+    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.gl_runner_script.rendered)}')) | Out-File -filepath Gitlab-runner-setup.ps1\" && powershell -ExecutionPolicy Unrestricted -File Gitlab-runner-setup.ps1 -GitLabRunnerToken ${data.template_file.gl_runner_script.vars.GitLabRunnerToken} -StAcctName ${data.template_file.gl_runner_script.vars.StAcctName} -StShareName ${data.template_file.gl_runner_script.vars.StShareName} -StAcctAccessKey ${data.template_file.gl_runner_script.vars.StAcctAccessKey}"
   }
   SETTINGS
 }
 
-resource "azurerm_key_vault_secret" "this" {
-  name         = "GitLabRunner-VM-Admin-Password"
-  value        = random_password.vm_password.result
-  key_vault_id = local.akvId
-}
+# "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.gl_runner_script.rendered)}')) | Out-File -filepath Gitlab-runner-setup.ps1\" && powershell -ExecutionPolicy Unrestricted -File Gitlab-runner-setup.ps1 -GitLabRunnerToken ${data.template_file.gl_runner_script.vars.GitLabRunnerToken} -StorageAccountName ${data.template_file.gl_runner_script.vars.StorageAccountName} -StorageAccountFileShareName ${data.template_file.gl_runner_script.vars.StorageAccountFileShareName} -StorageAccountFileShareAccessKey ${data.template_file.gl_runner_script.vars.StorageAccountFileShareAccessKey}"
+#    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.gl_runner_script.rendered)}')) | Out-File -filepath Gitlab-runner-setup.ps1\" && powershell -ExecutionPolicy Unrestricted -File Gitlab-runner-setup.ps1"
 
-resource "azurerm_role_assignment" "acrpush_role_assignment" {
-  scope                            = local.acrId
-  role_definition_name             = "ACrPush"
-  principal_id                     = module.uai_mid_gitlab.principal_id
-  skip_service_principal_aad_check = true
-}
-
-resource "azurerm_role_assignment" "aksrbacclusteradmin_role_assignment" {
-  scope                            = local.aksId
-  role_definition_name             = "Azure Kubernetes Service RBAC Cluster Admin"
-  principal_id                     = module.uai_mid_gitlab.principal_id
-  skip_service_principal_aad_check = true
-}
+#*/

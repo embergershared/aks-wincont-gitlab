@@ -32,7 +32,10 @@ data "azurerm_kubernetes_cluster" "aks" {
 data "template_file" "gl_runner_script" {
   template = file("Gitlab-runner-setup.ps1")
   vars = {
-    GitLabRunnerToken = "${var.gitlab_runner_token}"
+    GitLabRunnerToken                = "${var.gitlab_runner_token}",
+    StorageAccountName               = "${var.storage_account_name}",
+    StorageAccountFileShareName      = "${var.storage_account_fileshare_name}"
+    StorageAccountFileShareAccessKey = "${var.storage_account_fileshare_access_key}"
   }
 }
 

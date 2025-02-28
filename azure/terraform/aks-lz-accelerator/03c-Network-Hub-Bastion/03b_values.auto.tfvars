@@ -1,5 +1,5 @@
 # 03b_values.auto.tfvars
 
 plan_tags = {
-  Plan = "03b-Network-Bastion"
+  Plan = "03c-Network-Hub-Bastion"
 }

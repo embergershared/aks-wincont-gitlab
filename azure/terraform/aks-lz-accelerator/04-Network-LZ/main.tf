@@ -274,6 +274,42 @@ module "avm-res-network-privatednszone-contoso" {
   tags = azurerm_resource_group.rg.tags
 }
 
+module "avm-res-network-privatednszone-storage-blob" {
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
+  resource_group_name = azurerm_resource_group.rg.name
+  domain_name         = local.domain_name.storage_blob
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-blob"
+      vnetid           = local.vnetHubId
+      autoregistration = false
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
+}
+
+module "avm-res-network-privatednszone-storage-file" {
+  source           = "Azure/avm-res-network-privatednszone/azurerm"
+  version          = "0.1.2"
+  enable_telemetry = false
+
+  resource_group_name = azurerm_resource_group.rg.name
+  domain_name         = local.domain_name.storage_file
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-file"
+      vnetid           = local.vnetHubId
+      autoregistration = false
+    }
+  }
+
+  tags = azurerm_resource_group.rg.tags
+}
+
 /*
 module "avm-res-network-appgw" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"

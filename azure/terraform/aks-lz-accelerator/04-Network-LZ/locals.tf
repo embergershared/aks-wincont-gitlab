@@ -44,6 +44,8 @@ locals {
     aks               = "azmk8s.io"
     sql               = "privatelink.database.windows.net"
     contoso           = "private.contoso.com"
+    storage_file      = "privatelink.file.core.windows.net"
+    storage_blob      = "privatelink.blob.core.windows.net"
     AzureUSGovernment = ".cx.aks.containerservice.azure.us"
     AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
     AzureGermanCloud  = "" //TODO: what is the correct value here?

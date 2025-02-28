@@ -49,20 +49,23 @@ module "avm-res-operationalinsights-workspace" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks-cluster" {
-  name                              = module.naming.kubernetes_cluster.name_unique
-  resource_group_name               = var.rgLzName # data.azurerm_resource_group.rg.name
-  location                          = var.location # data.azurerm_resource_group.rg.location
-  dns_prefix_private_cluster        = module.naming.kubernetes_cluster.name_unique
-  private_cluster_enabled           = true
-  private_dns_zone_id               = local.dnszoneAksId # data.azurerm_private_dns_zone.dnszone-aks.id
-  azure_policy_enabled              = true
-  kubernetes_version                = "1.30"
+  name                = module.naming.kubernetes_cluster.name_unique
+  resource_group_name = var.rgLzName # data.azurerm_resource_group.rg.name
+  location            = var.location # data.azurerm_resource_group.rg.location
+
+  node_resource_group        = "${var.rgLzName}-aks-managed"
+  dns_prefix_private_cluster = module.naming.kubernetes_cluster.name_unique
+  private_cluster_enabled    = true
+  private_dns_zone_id        = local.dnszoneAksId # data.azurerm_private_dns_zone.dnszone-aks.id
+  azure_policy_enabled       = true
+  kubernetes_version         = "1.30"
+  sku_tier                   = "Standard"
+
   local_account_disabled            = true
+  role_based_access_control_enabled = true
   oidc_issuer_enabled               = true
-  sku_tier                          = "Standard"
   workload_identity_enabled         = true
   automatic_channel_upgrade         = "patch"
-  role_based_access_control_enabled = true
   http_application_routing_enabled  = true
 
   web_app_routing {
@@ -75,7 +78,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   }
 
   default_node_pool {
-    name                         = "default"
+    name                         = "system"
     vm_size                      = "Standard_DS2_v2"
     os_disk_size_gb              = 30
     os_sku                       = "Ubuntu"
@@ -230,4 +233,4 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic-aks" {
     category = "AllMetrics"
   }
 }
-
+#*/

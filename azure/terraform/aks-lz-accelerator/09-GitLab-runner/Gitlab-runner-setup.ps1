@@ -55,13 +55,13 @@ $gl_runner_packages = @(
   "notepadplusplus",
   "sqlpackage",
   "sqlcmd",
-  "dotnet", # "argocd-cli",
+  "dotnet",
+  # "argocd-cli",
   # "azure-data-studio",
   # "bind-toolsonly",
   # "cascadiacode",
   # "cascadiamono",
   # "docker-desktop",
-
   # "dotnet-8.0-runtime",
   # "firefox",
   # "flux",
@@ -75,8 +75,8 @@ $gl_runner_packages = @(
   # "nerd-fonts-firacode",
   # "nerd-fonts-firamono",
   # "nerd-fonts-jetbrainsmono",
-  # "nodejs" # 'nodejs-lts --version="20.18.0"'
-  # "winscp"
+  # "nodejs", # 'nodejs-lts --version="20.18.0"'
+  # "winscp",
   "vscode"
 )
 Install-ChocoPackage -Packages $gl_runner_packages

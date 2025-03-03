@@ -1,14 +1,14 @@
 param(
   [Parameter(Mandatory = $true)][string] $GitLabRunnerToken,
   [Parameter(Mandatory = $true)][string] $StAcctName,
-  [Parameter(Mandatory = $true)][string] $StShareName,
-  [Parameter(Mandatory = $true)][string] $StAcctAccessKey
+  [Parameter(Mandatory = $true)][string] $StContainerName,
+  [Parameter(Mandatory = $true)][string] $MSIClientid
 )
 
 $filePath = "C:\GitLab-Runner-setup_log.txt"
 New-Item -Path $filePath -ItemType File -Force
 Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner setup started"
-Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: GitLabRunnerToken=$GitLabRunnerToken, StAcctName=$StAcctName, StShareName=$StShareName, StAcctAccessKey=$StAcctAccessKey"
+Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: GitLabRunnerToken=$GitLabRunnerToken, StAcctName=$StAcctName, StContainerName=$StContainerName, MSIClientid=$MSIClientid"
 
 # Set VM time zone
 Set-TimeZone -Name "Eastern Standard Time"
@@ -137,6 +137,18 @@ Add-Content -Path $filePath -Value "$(Get-Date): Added paths to the PATH environ
 # }
 
 # TODO: add code to retrieve BACPAC files from Azure Blob with managed identity + Private endpoint
+# Download BACPAC files from Azure Blob
+Add-Content -Path $filePath -Value "$(Get-Date): Downloading BACPAC files from Azure Blob"
+Add-Content -Path $filePath -Value "$(Get-Date): Creating directory C:\sql"
+New-Item -Path 'C:\sql' -ItemType Directory
+Add-Content -Path $filePath -Value "$(Get-Date): Az login with User Assigned Identity"
+az login --identity --client-id $MSIClientid
+Add-Content -Path $filePath -Value "$(Get-Date): Loading blob list from Azure Blob Storage Container"
+$blobList=az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json -Depth 100
+foreach($blob in $blobList){
+  Add-Content -Path $filePath -Value "$(Get-Date): Downloading blob $($blob.name)"
+  az storage blob download --account-name $StAcctName --container-name $StContainerName --name $blob.name --file "c:\sql\$($blob.name)" --auth-mode login
+}
 
 # Restart the machine
 Add-Content -Path $filePath -Value "$(Get-Date): Launching Server restart"

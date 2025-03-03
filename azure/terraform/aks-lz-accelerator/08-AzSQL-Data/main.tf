@@ -125,7 +125,7 @@ resource "azurerm_storage_share" "this" {
 }
 
 ################################  Private endpoints for Storage Account  ################################
-/*
+
 resource "azurerm_private_endpoint" "pe_blob" {
   name                          = "pe-to-blob-${replace(azurerm_storage_account.this.name, "-", "")}"
   resource_group_name           = var.rgLzName
@@ -156,6 +156,7 @@ resource "azurerm_private_dns_a_record" "pe_blob_dns_record" {
 }
 #*/
 
+/*
 resource "azurerm_private_endpoint" "pe_file" {
   name                          = "pe-to-file-${replace(azurerm_storage_account.this.name, "-", "")}"
   resource_group_name           = var.rgLzName

@@ -67,6 +67,7 @@ $gl_runner_packages = @(
   "sqlcmd",
   "dotnet-8.0-sdk",
   "dotnet",
+  "visualstudio2022community",
   "vscode"
 )
 Install-ChocoPackage -Packages $gl_runner_packages
@@ -102,7 +103,7 @@ Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/
 Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner installed"
 
 # Add additional entries to the PATH
-[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd", [System.EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 Add-Content -Path $filePath -Value "$(Get-Date): Added paths to the PATH environment variable"
 

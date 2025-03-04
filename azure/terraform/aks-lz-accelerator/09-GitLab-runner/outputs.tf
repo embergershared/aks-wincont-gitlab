@@ -8,3 +8,17 @@ output "bastion_rdp_cmd" {
 # output "azurerm_storage_account" {
 #   value = data.azurerm_storage_account.poc_st_acct
 # }
+
+# output "gitlab_runner_token" {
+#   value     = data.template_file.gl_runner_script.vars.gitlab_runner_token
+#   sensitive = true
+# }
+# output "StAcctName" {
+#   value = data.template_file.gl_runner_script.vars.StAcctName
+# }
+# output "StContainerName" {
+#   value = data.template_file.gl_runner_script.vars.StContainerName
+# }
+# output "MSIClientid" {
+#   value = data.template_file.gl_runner_script.vars.MSIClientid
+# }

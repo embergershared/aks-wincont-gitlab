@@ -1,14 +1,24 @@
-param(
-  [Parameter(Mandatory = $true)][string] $GitLabRunnerToken,
-  [Parameter(Mandatory = $true)][string] $StAcctName,
-  [Parameter(Mandatory = $true)][string] $StContainerName,
-  [Parameter(Mandatory = $true)][string] $MSIClientid
+[CmdletBinding()]
+
+param
+( 
+  [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param1,
+  [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param2,
+  [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param3,
+  [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param4
 )
 
 $filePath = "C:\GitLab-Runner-setup_log.txt"
 New-Item -Path $filePath -ItemType File -Force
 Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner setup started"
-Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: GitLabRunnerToken=$GitLabRunnerToken, StAcctName=$StAcctName, StContainerName=$StContainerName, MSIClientid=$MSIClientid"
+Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: Param1 = ""$($Param1)"", Param2 = ""$($Param2)"", Param3 = ""$($Param3)"", Param4 = ""$($Param4)"""
+
+Add-Content -Path $filePath -Value "$(Get-Date): Setting values from parameters"
+$TOKEN = $Param1
+$StAcctName = $Param2
+$StContainerName = $Param3
+$MsiClientId = $Param4
+Add-Content -Path $filePath -Value "$(Get-Date): Variables values: TOKEN = ""$($TOKEN)"", StAcctName = ""$($StAcctName)"", StContainerName = ""$($StContainerName)"", MsiClientId = ""$($MsiClientId)"""
 
 # Set VM time zone
 Set-TimeZone -Name "Eastern Standard Time"
@@ -56,27 +66,6 @@ $gl_runner_packages = @(
   "sqlpackage",
   "sqlcmd",
   "dotnet",
-  # "argocd-cli",
-  # "azure-data-studio",
-  # "bind-toolsonly",
-  # "cascadiacode",
-  # "cascadiamono",
-  # "docker-desktop",
-  # "dotnet-8.0-runtime",
-  # "firefox",
-  # "flux",
-  # "gh",
-  # "jdk8",
-  # "krew",
-  # "kubectx",
-  # "kubens",
-  # "microsoftazurestorageexplorer",
-  # "nerd-fonts-cascadiacode",
-  # "nerd-fonts-firacode",
-  # "nerd-fonts-firamono",
-  # "nerd-fonts-jetbrainsmono",
-  # "nodejs", # 'nodejs-lts --version="20.18.0"'
-  # "winscp",
   "vscode"
 )
 Install-ChocoPackage -Packages $gl_runner_packages
@@ -96,13 +85,9 @@ Start-Service docker
 #docker run hello-world
 Add-Content -Path $filePath -Value "$(Get-Date): Docker installed"
 
-# Note:
-# - should solve the need for: `Docker Desktop` / Right-click / `switch to windows containers`
-# - May also save the use of this: `& 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchDaemon -SwitchWindowsEngine`
-
 # Install GitLab Runner
 New-Item -Path 'C:\GitLab-Runner' -ItemType Directory
-cd 'C:\GitLab-Runner'
+Set-Location 'C:\GitLab-Runner'
 
 ## Download binary
 Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-windows-amd64.exe" -OutFile "gitlab-runner.exe"
@@ -112,7 +97,6 @@ Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/
 .\gitlab-runner.exe start
 
 # Register GitLab Runner
-$TOKEN = $GitLabRunnerToken
 .\gitlab-runner.exe register --url https://gitlab.com --token $TOKEN --executor "shell" --non-interactive --description "hww poc windows runner"
 Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner installed"
 
@@ -121,34 +105,20 @@ Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner installed"
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 Add-Content -Path $filePath -Value "$(Get-Date): Added paths to the PATH environment variable"
 
-# # Mount the Azure File Share as Z drive on the GitLab runner VM
-# $connectTestResult = Test-NetConnection -ComputerName "$StAcctName.file.core.windows.net" -Port 445
-# if ($connectTestResult.TcpTestSucceeded) {
-#   # Save the password so the drive will persist on reboot
-#   cmd.exe /C "cmdkey /add:`"$StAcctName.file.core.windows.net`" /user:`"localhost\$StAcctName`" /pass:`"$StAcctAccessKey`""
-#   # Mount the drive
-#   New-PSDrive -Name Z -PSProvider FileSystem -Root "\\$StAcctName.file.core.windows.net\$StShareName" -Persist
-#   Get-ChildItem Z:\ | Out-File -FilePath $filePath
-#   Add-Content -Path $filePath -Value "$(Get-Date): Mounted Azure File Share as Z drive"
-# }
-# else {
-#   Write-Error -Message "Unable to reach the Azure storage account via port 445. Check to make sure your organization or ISP is not blocking port 445, or use Azure P2S VPN, Azure S2S VPN, or Express Route to tunnel SMB traffic over a different port."
-#   Add-Content -Path $filePath -Value "$(Get-Date): Unable to reach the Azure storage account via port 445"
-# }
-
-# TODO: add code to retrieve BACPAC files from Azure Blob with managed identity + Private endpoint
 # Download BACPAC files from Azure Blob
 Add-Content -Path $filePath -Value "$(Get-Date): Downloading BACPAC files from Azure Blob"
-Add-Content -Path $filePath -Value "$(Get-Date): Creating directory C:\sql"
-New-Item -Path 'C:\sql' -ItemType Directory
+Add-Content -Path $filePath -Value "$(Get-Date): Creating directory C:\sql-bacpac"
+New-Item -Path 'C:\sql-bacpac' -ItemType Directory
 Add-Content -Path $filePath -Value "$(Get-Date): Az login with User Assigned Identity"
-az login --identity --client-id $MSIClientid
+az login --identity --client-id $MsiClientId
+az account show >> $filePath
 Add-Content -Path $filePath -Value "$(Get-Date): Loading blob list from Azure Blob Storage Container"
-$blobList=az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json -Depth 100
-foreach($blob in $blobList){
+$blobList = az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json -Depth 100
+foreach ($blob in $blobList) {
   Add-Content -Path $filePath -Value "$(Get-Date): Downloading blob $($blob.name)"
-  az storage blob download --account-name $StAcctName --container-name $StContainerName --name $blob.name --file "c:\sql\$($blob.name)" --auth-mode login
+  az storage blob download --account-name $StAcctName --container-name $StContainerName --name $blob.name --file "c:\sql-bacpac\$($blob.name)" --auth-mode login
 }
+Add-Content -Path $filePath -Value "$(Get-Date): Downloaded BACPAC files from Azure Blob"
 
 # Restart the machine
 Add-Content -Path $filePath -Value "$(Get-Date): Launching Server restart"

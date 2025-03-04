@@ -46,6 +46,6 @@ variable "gitlab_runner_token" {
   sensitive = true
 }
 
-variable "storage_account_fileshare_name" {
+variable "storage_account_container_name" {
   type = string
 }

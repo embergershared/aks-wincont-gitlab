@@ -3,6 +3,8 @@
     "fileshare",
     "privatelink",
     "snetvm",
+    "sqlcmd",
+    "sqlpackage",
     "subresource"
   ]
 }

@@ -17,4 +17,10 @@ locals {
 
   hub_bastion_name    = data.azurerm_resources.hub_bastion_s.resources.0.name
   hub_bastion_rg_name = data.azurerm_resources.hub_bastion_s.resources.0.resource_group_name
+
+  # Custom extension script parameters
+  param_1 = var.gitlab_runner_token
+  param_2 = data.azurerm_storage_account.poc_st_acct.name
+  param_3 = data.azurerm_storage_container.poc_st_blob.name
+  param_4 = module.uai_mid_gitlab.client_id
 }

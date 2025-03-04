@@ -29,8 +29,8 @@ data "azurerm_storage_account" "poc_st_acct" {
   name                = local.storage_account_name
   resource_group_name = var.rgLzName
 }
-data "azurerm_storage_share" "poc_st_share" {
-  name                 = var.storage_account_fileshare_name
+data "azurerm_storage_container" "poc_st_blob" {
+  name                 = var.storage_account_container_name
   storage_account_name = data.azurerm_storage_account.poc_st_acct.name
 }
 
@@ -41,12 +41,6 @@ data "azurerm_resources" "hub_bastion_s" {
 }
 
 # Generating the setup script from PowerShell file
-data "template_file" "gl_runner_script" {
+data "template_file" "runner_setup_file" {
   template = file("Gitlab-runner-setup.ps1")
-  vars = {
-    GitLabRunnerToken = "${var.gitlab_runner_token}",
-    StAcctName        = "${data.azurerm_storage_account.poc_st_acct.name}",
-    StShareName       = "${data.azurerm_storage_share.poc_st_share.name}",
-    StAcctAccessKey   = "${data.azurerm_storage_account.poc_st_acct.primary_access_key}",
-  }
 }

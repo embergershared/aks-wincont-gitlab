@@ -65,6 +65,7 @@ $gl_runner_packages = @(
   "notepadplusplus",
   "sqlpackage",
   "sqlcmd",
+  "dotnet-8.0-sdk",
   "dotnet",
   "vscode"
 )

@@ -116,6 +116,17 @@ resource "azurerm_storage_account" "this" {
 
 ################################  Store data in Storage Account  ################################
 #------------------------------
+# - Containers
+#------------------------------
+resource "azurerm_storage_container" "this" {
+  name               = "poc-data"
+  storage_account_id = azurerm_storage_account.this.id
+
+  # Infrastructure Protection: Block Internet access and restrict network connectivity to the Storage account via the Storage firewall and access the data objects in the Storage account via Private Endpoint which secures all traffic between VNet and the storage account over a Private Link.
+  container_access_type = "private"
+}
+/*
+#------------------------------
 # - File share
 #------------------------------
 resource "azurerm_storage_share" "this" {
@@ -123,6 +134,7 @@ resource "azurerm_storage_share" "this" {
   quota              = 1024
   storage_account_id = azurerm_storage_account.this.id
 }
+#*/
 
 ################################  Private endpoints for Storage Account  ################################
 

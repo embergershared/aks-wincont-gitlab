@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classifieds-deployment
+  namespace: classifieds
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: classifieds-deployment
+  template:
+    metadata:
+      labels:
+        app: classifieds-deployment
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      containers:
+      - name: classifieds
+        image: acrakslzaccel234.azurecr.io/classifieds:latest
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 80
+        env:
+        # - name: ConnectionStringClassifieds
+        #   value: "Server=tcp:xxxxxxxxxxx.database.windows.net,1433;Initial Catalog=Classifieds;Persist Security Info=False;User ID=xxxxxxxx;Password=xxxxxxxx;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+        # - name: ConnectionStringTimeTracker
+        #   value: "Server=tcp:xxxxxxxxxxx.database.windows.net,1433;Initial Catalog=timetracker;Persist Security Info=False;User ID=xxxxxxxx;Password=xxxxxxxx;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+        - name: ConnectionStringClassifieds
+          valueFrom:
+            secretKeyRef:
+              name: azsql-db-connectionstring-classifieds
+              key:  azsql-db-connectionstring-classifieds
+        - name: ConnectionStringTimeTracker
+          valueFrom:
+            secretKeyRef:
+              name: azsql-db-connectionstring-timetracker
+              key:  azsql-db-connectionstring-timetracker
+        volumeMounts:
+        - name: sql-secret-csi
+          mountPath: "/mnt/sql-secret-csi"
+          readOnly: true
+      volumes:
+        - name: sql-secret-csi
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "classifieds-sql-secret-csi"

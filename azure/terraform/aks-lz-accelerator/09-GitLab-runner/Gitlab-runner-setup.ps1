@@ -1,7 +1,7 @@
 [CmdletBinding()]
 
 param
-( 
+(
   [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param1,
   [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param2,
   [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param3,
@@ -65,11 +65,13 @@ $gl_runner_packages = @(
   "notepadplusplus",
   "sqlpackage",
   "sqlcmd",
-  "dotnet-8.0-sdk",
-  "dotnet",
-  "visualstudio2022community",
+  "visualstudio2022buildtools",
   "vscode"
 )
+# saved for reference
+# "dotnet-8.0-sdk",
+# "dotnet",
+# "visualstudio2022community",
 Install-ChocoPackage -Packages $gl_runner_packages
 Add-Content -Path $filePath -Value "$(Get-Date): Chocolatey Packages installed"
 
@@ -103,7 +105,8 @@ Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/
 Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner installed"
 
 # Add additional entries to the PATH
-[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
+#[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 Add-Content -Path $filePath -Value "$(Get-Date): Added paths to the PATH environment variable"
 
@@ -113,9 +116,11 @@ Add-Content -Path $filePath -Value "$(Get-Date): Creating directory C:\sql-bacpa
 New-Item -Path 'C:\sql-bacpac' -ItemType Directory
 Add-Content -Path $filePath -Value "$(Get-Date): Az login with User Assigned Identity"
 az login --identity --client-id $MsiClientId
-az account show >> $filePath
+#az account show >> $filePath
 Add-Content -Path $filePath -Value "$(Get-Date): Loading blob list from Azure Blob Storage Container"
 $blobList = az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json -Depth 100
+Add-Content -Path $filePath -Value "$(Get-Date): Printing blob list"
+$blobList >> $filePath
 foreach ($blob in $blobList) {
   Add-Content -Path $filePath -Value "$(Get-Date): Downloading blob $($blob.name)"
   az storage blob download --account-name $StAcctName --container-name $StContainerName --name $blob.name --file "c:\sql-bacpac\$($blob.name)" --auth-mode login

@@ -8,29 +8,33 @@ param
   [Parameter(ValuefromPipeline = $true, Mandatory = $true)] [string]$Param4
 )
 
+Start-Transcript -Path "C:\GitLab-Runner-setup_transcript.txt"
 $filePath = "C:\GitLab-Runner-setup_log.txt"
-New-Item -Path $filePath -ItemType File -Force
-Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner setup started"
-Add-Content -Path $filePath -Value "$(Get-Date): Parameters received: Param1 = ""$($Param1)"", Param2 = ""$($Param2)"", Param3 = ""$($Param3)"", Param4 = ""$($Param4)"""
 
-Add-Content -Path $filePath -Value "$(Get-Date): Setting values from parameters"
+function AddLog ($message) {
+  Add-Content -Path $filePath -Value "$(Get-Date): $message"
+  Write-Host "$(Get-Date): $message"
+}
+
+New-Item -Path $filePath -ItemType File -Force
+AddLog "GitLab Runner setup started"
+AddLog "Parameters received: Param1 = ""$($Param1)"", Param2 = ""$($Param2)"", Param3 = ""$($Param3)"", Param4 = ""$($Param4)"""
+
+AddLog "Setting values from parameters"
 $TOKEN = $Param1
 $StAcctName = $Param2
 $StContainerName = $Param3
 $MsiClientId = $Param4
-Add-Content -Path $filePath -Value "$(Get-Date): Variables values: TOKEN = ""$($TOKEN)"", StAcctName = ""$($StAcctName)"", StContainerName = ""$($StContainerName)"", MsiClientId = ""$($MsiClientId)"""
+AddLog "Variables values: TOKEN = ""$($TOKEN)"", StAcctName = ""$($StAcctName)"", StContainerName = ""$($StContainerName)"", MsiClientId = ""$($MsiClientId)"""
 
-# Set VM time zone
 Set-TimeZone -Name "Eastern Standard Time"
-Add-Content -Path $filePath -Value "$(Get-Date): Time zone set to EST"
+AddLog "Time zone set to EST"
 
-# Install Chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
 Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-Add-Content -Path $filePath -Value "$(Get-Date): Chocolatey installed"
+AddLog "Chocolatey installed"
 
-# Chocolatey functions
 Function Install-ChocoPackage {
   param (
     [Parameter(Mandatory = $true)]
@@ -40,13 +44,12 @@ Function Install-ChocoPackage {
   foreach ($package in $Packages) {
     $command = "choco install $package -y"
     Write-Host
-    Add-Content -Path $filePath -Value "$(Get-Date): Chocolatey installing package: $package"
+    AddLog "Chocolatey installing package: $package"
     Write-Host "Install-ChocoPackage => Executing: $command"
     Invoke-Expression $command
   }
 }
 
-# Install core packages
 $gl_runner_packages = @(
   "git",
   "powershell-core",
@@ -54,79 +57,53 @@ $gl_runner_packages = @(
   "kubernetes-cli",
   "kubernetes-helm"
   "azure-kubelogin",
-  "azure-powershell",
   "terraform",
-  "jq",
-  "openssl",
-  "python3",
-  "sysinternals",
-  "telnet",
-  "7zip",
-  "notepadplusplus",
   "sqlpackage",
   "sqlcmd",
   "visualstudio2022buildtools",
   "vscode"
 )
-# saved for reference
-# "dotnet-8.0-sdk",
-# "dotnet",
-# "visualstudio2022community",
-Install-ChocoPackage -Packages $gl_runner_packages
-Add-Content -Path $filePath -Value "$(Get-Date): Chocolatey Packages installed"
 
-# Install Docker for Windows containers
+Install-ChocoPackage -Packages $gl_runner_packages
+AddLog "Chocolatey Packages installed"
+
 Enable-WindowsOptionalFeature -Online -FeatureName containers -All -NoRestart
-Add-Content -Path $filePath -Value "$(Get-Date): Added Windows feature containers"
-## Require Restart
+AddLog "Added Windows feature containers"
 
 curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\
 [Environment]::SetEnvironmentVariable("Path", "$($env:path); C:\docker", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 dockerd --register-service
-Start-Service docker
-#docker run hello-world
-Add-Content -Path $filePath -Value "$(Get-Date): Docker installed"
+AddLog "Docker installed"
 
-# Install GitLab Runner
 New-Item -Path 'C:\GitLab-Runner' -ItemType Directory
 Set-Location 'C:\GitLab-Runner'
 
-## Download binary
-Invoke-WebRequest -Uri "https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-windows-amd64.exe" -OutFile "gitlab-runner.exe"
+curl.exe -o gitlab-runner.exe -LO https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-windows-amd64.exe
 
-## Register the runner (steps below), then run
 .\gitlab-runner.exe install
 .\gitlab-runner.exe start
 
-# Register GitLab Runner
 .\gitlab-runner.exe register --url https://gitlab.com --token $TOKEN --executor "shell" --non-interactive --description "hww poc windows runner"
-Add-Content -Path $filePath -Value "$(Get-Date): GitLab Runner installed"
+AddLog "GitLab Runner installed"
 
-# Add additional entries to the PATH
 [Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
-#[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\Program Files\Git\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\PowerShell\7;C:\Program Files\SqlCmd;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-Add-Content -Path $filePath -Value "$(Get-Date): Added paths to the PATH environment variable"
+AddLog "Added paths to the PATH environment variable"
 
-# Download BACPAC files from Azure Blob
-Add-Content -Path $filePath -Value "$(Get-Date): Downloading BACPAC files from Azure Blob"
-Add-Content -Path $filePath -Value "$(Get-Date): Creating directory C:\sql-bacpac"
+AddLog "Downloading BACPAC files from Azure Blob"
+AddLog "Creating directory C:\sql-bacpac"
 New-Item -Path 'C:\sql-bacpac' -ItemType Directory
-Add-Content -Path $filePath -Value "$(Get-Date): Az login with User Assigned Identity"
+AddLog "Az login with User Assigned Identity"
 az login --identity --client-id $MsiClientId
-#az account show >> $filePath
-Add-Content -Path $filePath -Value "$(Get-Date): Loading blob list from Azure Blob Storage Container"
-$blobList = az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json -Depth 100
-Add-Content -Path $filePath -Value "$(Get-Date): Printing blob list"
-$blobList >> $filePath
+AddLog "Loading blob list from Azure Blob Storage Container"
+$blobList = az storage blob list --account-name $StAcctName --container-name $StContainerName --auth-mode login | ConvertFrom-Json
+$blobList
 foreach ($blob in $blobList) {
-  Add-Content -Path $filePath -Value "$(Get-Date): Downloading blob $($blob.name)"
+  AddLog "Downloading blob $($blob.name)"
   az storage blob download --account-name $StAcctName --container-name $StContainerName --name $blob.name --file "c:\sql-bacpac\$($blob.name)" --auth-mode login
 }
-Add-Content -Path $filePath -Value "$(Get-Date): Downloaded BACPAC files from Azure Blob"
 
-# Restart the machine
-Add-Content -Path $filePath -Value "$(Get-Date): Launching Server restart"
+AddLog "Launching Server restart"
 Restart-Computer -Force

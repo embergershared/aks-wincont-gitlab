@@ -72,7 +72,7 @@ AddLog "Added Windows feature containers"
 
 curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\
-[Environment]::SetEnvironmentVariable("Path", "$($env:path); C:\docker", [System.EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("Path", "$($env:path);C:\docker", [System.EnvironmentVariableTarget]::Machine)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 dockerd --register-service
 AddLog "Docker installed"

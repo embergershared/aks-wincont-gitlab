@@ -9,6 +9,7 @@ az network bastion rdp --name "snap-hub-sysv" --resource-group "rg-use2-391575-s
 ## Gitlab.com project
 
 [hww](https://gitlab.com/southoutsteam/hww)
+[hww-db](https://gitlab.com/southoutsteam/hww-db/)
 
 ## Install (Custom script)
 

@@ -37,6 +37,8 @@ module "gitlab_runner_vm" {
   disable_password_authentication    = false
   encryption_at_host_enabled         = true
   generate_admin_password_or_ssh_key = false
+  secure_boot_enabled                = false
+  vtpm_enabled                       = false
   os_type                            = var.os_type
   sku_size                           = var.sku_size
   zone                               = 1
@@ -65,8 +67,9 @@ module "gitlab_runner_vm" {
   }
 
   os_disk = {
-    caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
+    caching = "ReadWrite"
+    # storage_account_type = "Premium_LRS" # Requested but getting replaced (??) by standard after deployment
+    storage_account_type = "Standard_LRS"
   }
 
   # source_image_reference = {
@@ -84,6 +87,8 @@ resource "azurerm_key_vault_secret" "this" {
   value        = random_password.vm_password.result
   key_vault_id = local.akvId
 }
+
+# Giving the GitLab Runner MSI access to the other Azure resources though RBAC
 resource "azurerm_role_assignment" "acr_push_role_assignment" {
   scope                            = local.acrId
   role_definition_name             = "ACrPush"
@@ -102,7 +107,20 @@ resource "azurerm_role_assignment" "blob_reader_role_assignment" {
   principal_id                     = module.uai_mid_gitlab.principal_id
   skip_service_principal_aad_check = true
 }
+resource "azurerm_role_assignment" "kv_secret_reader_role_assignment" {
+  scope                            = local.akvId
+  role_definition_name             = "Key Vault Secrets User"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
+}
+resource "azurerm_role_assignment" "az_sql_role_assignment" {
+  scope                            = local.sql_server_id
+  role_definition_name             = "SQL Server Contributor"
+  principal_id                     = module.uai_mid_gitlab.principal_id
+  skip_service_principal_aad_check = true
+}
 
+# Install the VM as a Gitlab runner
 resource "azurerm_virtual_machine_extension" "gl_runner_setup_ext" {
   name                       = "runner-setup"
   virtual_machine_id         = module.gitlab_runner_vm.resource_id

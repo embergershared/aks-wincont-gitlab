@@ -33,6 +33,14 @@ data "azurerm_storage_container" "poc_st_blob" {
   name                 = var.storage_account_container_name
   storage_account_name = data.azurerm_storage_account.poc_st_acct.name
 }
+data "azurerm_mssql_server" "sql_server" {
+  name                = local.sql_server_name
+  resource_group_name = var.rgLzName
+}
+data "azurerm_user_assigned_identity" "sql_server_uai" {
+  name                = local.sql_server_uai_name
+  resource_group_name = var.rgLzName
+}
 
 # Gather required resources (Bastion) from the Hub Resource Group
 data "azurerm_resources" "hub_bastion_s" {

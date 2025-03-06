@@ -7,12 +7,14 @@ plan_tags = {
 rgLzName   = "rg-use2-391575-s3-akswincont-avm-lz"
 vnetLzName = "vnet-lz"
 
-os_type  = "Linux"
-sku_size = "Standard_B2ms"
+os_type  = "Windows"
+sku_size = "Standard_B2s"
 
 source_image_reference = {
-  publisher = "Canonical"
-  offer     = "0001-com-ubuntu-server-jammy"
-  sku       = "22_04-lts-gen2"
+  publisher = "MicrosoftWindowsDesktop"
+  offer     = "Windows-11"
+  sku       = "win11-24h2-pro"
   version   = "latest"
 }
+
+jumpbox_admin_username = "jumpboxadmin"

@@ -22,8 +22,8 @@ az network bastion rdp --name "snap-hub-sysv" --resource-group "rg-use2-391575-s
 
 ```bash
 # Optionally enable required Windows features if needed
-Enable-WindowsOptionalFeature -Online -FeatureName containers –All
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
+Enable-WindowsOptionalFeature -Online -FeatureName containers -All
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 
 curl.exe -o docker.zip -LO https://download.docker.com/win/static/stable/x86_64/docker-20.10.13.zip
 Expand-Archive docker.zip -DestinationPath C:\

@@ -19,3 +19,9 @@ data "azurerm_key_vault" "akv" {
   name                = local.kv_name
   resource_group_name = var.rgLzName
 }
+
+# Gather required resources (Bastion) from the Hub Resource Group
+data "azurerm_resources" "hub_bastion_s" {
+  resource_group_name = var.rgHubName
+  type                = "Microsoft.Network/bastionHosts"
+}

@@ -1,3 +1,6 @@
+variable "rgHubName" {
+  type = string
+}
 variable "rgLzName" {
   type    = string
   default = "AksTerra-AVM-LZ-RG"
@@ -24,12 +27,12 @@ variable "deployingAllInOne" {
 }
 
 variable "vnetLzId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "snetvmId" {
-  type = string
+  type    = string
   default = ""
 }
 
@@ -39,7 +42,7 @@ variable "jumpbox_admin_username" {
 }
 
 variable "jumpbox_admin_password" {
-  type    = string
+  type = string
 }
 
 variable "os_type" {

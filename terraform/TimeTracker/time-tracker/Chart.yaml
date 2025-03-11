@@ -1,0 +1,12 @@
+apiVersion: v2
+name: time-tracker
+description: Time Tracker application Helm chart
+
+type: application
+
+# This is the chart version.
+version: 0.1.0
+
+# This is the version number of the application being deployed.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"

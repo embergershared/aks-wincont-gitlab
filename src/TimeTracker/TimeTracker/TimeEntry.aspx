@@ -1,5 +1,5 @@
 <%@ Page Language="C#" MasterPageFile="~/TimeTracker/MasterPage.master" CodeFile="TimeEntry.aspx.cs"
-    Inherits="TimeEntry_aspx" Title="My Company - Time Tracker - Log a Time Entry"
+    Inherits="TimeEntry_aspx" Title="Microsoft Technnical Specialist - Time Tracker - Log a Time Entry"
     Culture="auto" UICulture="auto" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="maincontent" runat="Server">

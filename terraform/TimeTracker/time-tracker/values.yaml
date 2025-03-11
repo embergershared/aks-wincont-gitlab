@@ -4,6 +4,8 @@
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
+deployment:
+  create: true
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
@@ -51,6 +53,7 @@ securityContext: {}
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
+  create: true
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: LoadBalancer
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
@@ -60,7 +63,7 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: false
+  create: false
   className: nginx-internal
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -108,19 +111,19 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
-- name: sql-secret-csi
-  csi:
-    driver: secrets-store.csi.k8s.io
-    readOnly: true
-    volumeAttributes:
-      secretProviderClass: "timetracker-sql-secret-csi"
+volumes: {}
+# - name: sql-secret-csi
+#   csi:
+#     driver: secrets-store.csi.k8s.io
+#     readOnly: true
+#     volumeAttributes:
+#       secretProviderClass: "timetracker-sql-secret-csi"
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-- name: sql-secret-csi
-  mountPath: "/mnt/sql-secret-csi"
-  readOnly: true
+# - name: sql-secret-csi
+#   mountPath: "/mnt/sql-secret-csi"
+#   readOnly: true
 
 nodeSelector:
   kubernetes.io/os: windows
@@ -130,9 +133,9 @@ tolerations: []
 affinity: {}
 
 secretProviderClass:
+  create: true
   provider: azure
   secretName: azsql-db-connectionstring-timetracker
   tenantId: c4c9004b-43cc-4303-bfbf-0a5f7e1d0139
   keyVaultName: kvakslzaccel234
   userAssignedIdentityId: 92598350-519b-4281-a3f3-c19afb1ef214
-  useVMManagedIdentity: "true"

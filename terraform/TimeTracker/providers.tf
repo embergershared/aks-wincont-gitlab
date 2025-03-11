@@ -40,8 +40,8 @@ provider "azurerm" {
 # / Kubelogin with az cli login
 #   To use it: in the console that runs terraform, perform an "az login", then run terraform
 provider "kubernetes" {
-  host                   = data.azurerm_kubernetes_cluster.this.kube_config.0.host
-  cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
+  host                   = data.azurerm_kubernetes_cluster.aks.kube_config.0.host
+  cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "kubelogin"
@@ -59,8 +59,8 @@ provider "helm" {
   # Ref: https://registry.terraform.io/providers/hashicorp/helm/latest/docs
   #      https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release
   kubernetes {
-    host                   = data.azurerm_kubernetes_cluster.this.kube_config.0.host
-    cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
+    host                   = data.azurerm_kubernetes_cluster.aks.kube_config.0.host
+    cluster_ca_certificate = base64decode(data.azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "kubelogin"

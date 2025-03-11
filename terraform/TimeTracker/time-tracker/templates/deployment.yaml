@@ -46,11 +46,11 @@ spec:
               containerPort: {{ .Values.service.port }}
               # protocol: TCP
           env:
-          - name: ConnectionStringTimeTracker
+          - name: {{ .Values.deployment.envFromKeyVault.name }}
             valueFrom:
               secretKeyRef:
-                name: azsql-db-connectionstring-timetracker
-                key:  azsql-db-connectionstring-timetracker
+                name: {{ .Values.deployment.envFromKeyVault.secretName }}
+                key:  {{ .Values.deployment.envFromKeyVault.secretName }}
           {{- with .Values.deployment.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -64,14 +64,14 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-          - name: sql-secret-csi
-            mountPath: "/mnt/sql-secret-csi"
+          - name: {{ .Values.deployment.secretVolume.name }}
+            mountPath: "/mnt/{{ .Values.deployment.secretVolume.name }}"
             readOnly: true
           {{- with .Values.deployment.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-      - name: sql-secret-csi
+      - name: {{ .Values.deployment.secretVolume.name }}
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true

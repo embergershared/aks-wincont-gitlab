@@ -18,10 +18,8 @@ deployment:
   # This is for setting Kubernetes Labels to a Pod.
   # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   podLabels: {}
-
   podSecurityContext: {}
     # fsGroup: 2000
-
   securityContext: {}
     # capabilities:
     #   drop:
@@ -40,7 +38,6 @@ deployment:
     requests:
       cpu: 100m
       memory: 256Mi
-
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe: {}
     # httpGet:
@@ -50,8 +47,13 @@ deployment:
     # httpGet:
     #   path: /
     #   port: http
-
+  # Environment variables
+  envFromKeyVault:
+    name: ConnectionStringTimeTracker
+    secretName: azsql-db-connectionstring-timetracker
   # Additional volumes on the output Deployment definition.
+  secretVolume:
+    name: sql-secret-csi
   volumes: {}
   # - name: sql-secret-csi
   #   csi:
@@ -59,18 +61,17 @@ deployment:
   #     readOnly: true
   #     volumeAttributes:
   #       secretProviderClass: "timetracker-sql-secret-csi"
-
   # Additional volumeMounts on the output Deployment definition.
   volumeMounts:
   # - name: sql-secret-csi
   #   mountPath: "/mnt/sql-secret-csi"
   #   readOnly: true
-
+  # Node selectors
   nodeSelector:
     kubernetes.io/os: windows
-
+  # Tolerations
   tolerations: []
-
+  # Affinity
   affinity: {}
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/

@@ -7,40 +7,40 @@ metadata:
     {{- include "time-tracker.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "time-tracker.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.deployment.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "time-tracker.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
+        {{- with .Values.deployment.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "time-tracker.serviceAccountName" . }}
-      {{- with .Values.podSecurityContext }}
+      {{- with .Values.deployment.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
+          {{- with .Values.deployment.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -51,15 +51,15 @@ spec:
               secretKeyRef:
                 name: azsql-db-connectionstring-timetracker
                 key:  azsql-db-connectionstring-timetracker
-          {{- with .Values.livenessProbe }}
+          {{- with .Values.deployment.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.readinessProbe }}
+          {{- with .Values.deployment.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources }}
+          {{- with .Values.deployment.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -67,7 +67,7 @@ spec:
           - name: sql-secret-csi
             mountPath: "/mnt/sql-secret-csi"
             readOnly: true
-          {{- with .Values.volumeMounts }}
+          {{- with .Values.deployment.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
@@ -77,18 +77,18 @@ spec:
           readOnly: true
           volumeAttributes:
             secretProviderClass: {{ include "time-tracker.fullname" . }}
-      {{- with .Values.volumes }}
+      {{- with .Values.deployment.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.deployment.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.deployment.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

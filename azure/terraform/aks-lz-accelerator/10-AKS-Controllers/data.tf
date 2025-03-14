@@ -3,6 +3,11 @@ data "azurerm_resources" "lz_rg_resource_s" {
   resource_group_name = var.rgLzName
 }
 
+data "azurerm_kubernetes_cluster" "aks" {
+  name                = local.aks_name #split("/", local.aksId)[8]
+  resource_group_name = var.rgLzName   #split("/", local.aksId)[4]
+}
+
 /*
 # Data providers for required resources
 data "azurerm_virtual_network" "vnet-lz" {

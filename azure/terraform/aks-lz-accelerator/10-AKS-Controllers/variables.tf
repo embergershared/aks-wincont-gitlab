@@ -11,4 +11,7 @@ variable "location" {
   default = "eastus2"
 }
 
+variable "private_ingress_controller_ns_name" {}
+
 variable "private_dns_zone_name" {}
+

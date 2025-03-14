@@ -4,5 +4,6 @@ plan_tags = {
   Plan = "09-GitLab-Runner"
 }
 
-private_dns_zone_name = "private.contoso.com"
+private_ingress_controller_ns_name = "priv-ingress-nginx"
+private_dns_zone_name              = "private.contoso.com"
 

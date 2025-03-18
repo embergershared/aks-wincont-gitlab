@@ -68,9 +68,9 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   automatic_channel_upgrade         = "patch"
   http_application_routing_enabled  = true
 
-  web_app_routing {
-    dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
-  }
+  # web_app_routing {
+  #   dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
+  # }
   azure_active_directory_role_based_access_control {
     managed                = true
     azure_rbac_enabled     = true
@@ -178,12 +178,12 @@ resource "azurerm_role_assignment" "role-assignment-akv" {
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "role-assignment-private-dns" {
-  principal_id                     = azurerm_kubernetes_cluster.aks-cluster.web_app_routing[0].web_app_routing_identity[0].object_id
-  role_definition_name             = "Private DNS Zone Contributor"
-  scope                            = local.dnszoneContosoId
-  skip_service_principal_aad_check = true
-}
+# resource "azurerm_role_assignment" "role-assignment-private-dns" {
+#   principal_id                     = azurerm_kubernetes_cluster.aks-cluster.web_app_routing[0].web_app_routing_identity[0].object_id
+#   role_definition_name             = "Private DNS Zone Contributor"
+#   scope                            = local.dnszoneContosoId
+#   skip_service_principal_aad_check = true
+# }
 
 resource "azurerm_monitor_diagnostic_setting" "diagnostic-aks" {
   name                       = module.naming.monitor_diagnostic_setting.name_unique

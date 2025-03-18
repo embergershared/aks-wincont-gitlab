@@ -31,6 +31,10 @@ resource "helm_release" "private_ingress_controller_release" {
     value = "/healthz"
   }
   set {
+    name  = "controller.ingressClass"
+    value = "nginx-internal"
+  }
+  set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
     value = "true"
   }

@@ -5,5 +5,8 @@ plan_tags = {
 }
 
 private_ingress_controller_ns_name = "priv-ingress-nginx"
-private_dns_zone_name              = "private.contoso.com"
+private_ingress_load_balancer_ip   = "10.1.1.6"
+cert_manager_ns_name               = "cert-manager"
+
+private_dns_zone_name = "private.contoso.com"
 

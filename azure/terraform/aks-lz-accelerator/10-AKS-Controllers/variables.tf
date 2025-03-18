@@ -12,6 +12,9 @@ variable "location" {
 }
 
 variable "private_ingress_controller_ns_name" {}
+variable "private_ingress_load_balancer_ip" {}
+
+variable "cert_manager_ns_name" {}
 
 variable "private_dns_zone_name" {}
 

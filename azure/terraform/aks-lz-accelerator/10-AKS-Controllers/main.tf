@@ -1,9 +1,9 @@
+# Nginx Ingress Controller on kubernetes-private Load Balancer
 resource "kubernetes_namespace" "ing_ns" {
   metadata {
     name = var.private_ingress_controller_ns_name
   }
 }
-
 resource "helm_release" "private_ingress_controller_release" {
   depends_on = [
     kubernetes_namespace.ing_ns,
@@ -31,11 +31,46 @@ resource "helm_release" "private_ingress_controller_release" {
     value = "/healthz"
   }
   set {
+    name  = "controller.ingressClass"
+    value = "nginx-internal"
+  }
+  set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
     value = "true"
   }
   set {
     name  = "controller.service.loadBalancerIP"
-    value = "10.1.1.6"
+    value = var.private_ingress_load_balancer_ip
   }
 }
+
+# Cert Manager to issue and register Ingress TLS certificates
+resource "kubernetes_namespace" "cert_manager_ns" {
+  metadata {
+    name = var.cert_manager_ns_name
+  }
+}
+resource "helm_release" "cert_manager_release" {
+  depends_on = [
+    kubernetes_namespace.cert_manager_ns,
+  ]
+
+  namespace = kubernetes_namespace.cert_manager_ns.metadata[0].name
+  name      = "cert-manager"
+
+  repository = "https://charts.jetstack.io/"
+  chart      = "cert-manager"
+  version    = "v1.17.0"
+
+  # Additional settings
+  cleanup_on_fail = true # default= false
+
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+}
+
+# Boot strap the Cert issuer
+# https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers
+

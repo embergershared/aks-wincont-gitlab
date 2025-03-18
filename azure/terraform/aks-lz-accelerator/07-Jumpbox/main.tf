@@ -72,7 +72,7 @@ module "jumpbox_vm" {
   os_disk = {
     caching = "ReadWrite"
     # storage_account_type = "Premium_LRS" # Requested but getting replaced (??) by standard after deployment
-    storage_account_type = "Premium_LRS"
+    storage_account_type = "Standard_LRS"
   }
 
   # source_image_reference = {

@@ -9,6 +9,10 @@
 ## Certificates
 **/*.pem
 
+azure/terraform/aks-lz-accelerator/share-*
+azure/terraform/aks-lz-accelerator/10-AKS-Controllers/ingress-nginx-4.12.0.tgz
+azure/terraform/aks-lz-accelerator/10-AKS-Controllers/ingress-nginx-4.12.0/*
+
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,visualstudio,visualstudiocode,dotnetcore,aspnetcore
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,visualstudio,visualstudiocode,dotnetcore,aspnetcore
 
@@ -649,5 +653,4 @@ terraform.rc
 terragrunt-debug.tfvars.json
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,terragrunt
-azure/terraform/aks-lz-accelerator/share-Emmanuel-pass-zip.rar
-azure/terraform/aks-lz-accelerator/share-Emmanuel.zip
+

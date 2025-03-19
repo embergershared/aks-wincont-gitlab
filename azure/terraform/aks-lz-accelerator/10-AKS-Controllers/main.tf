@@ -75,8 +75,82 @@ resource "helm_release" "cert_manager_release" {
   }
 }
 
-# Boot strap the Cert issuer
+resource "time_sleep" "wait" {
+  create_duration = "60s"
+
+  depends_on = [
+    helm_release.cert_manager_release
+  ]
+}
+
+# Boot strap the Cert issuer for all cluster based on a self-signed certificate
 # https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers
 
-# Execute:
-# kubectl apply - f XX\aks-wincont-gitlab\azure\terraform\aks-lz-accelerator\10-AKS-Controllers\Self-Signed-CA.yaml
+resource "kubernetes_manifest" "cluster_issuer_self_signed" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "ClusterIssuer"
+    metadata = {
+      name = "${local.self_signed_cluster_issuer_name}"
+    }
+    spec = {
+      selfSigned = {}
+    }
+  }
+
+  depends_on = [
+    helm_release.cert_manager_release,
+    time_sleep.wait
+  ]
+}
+
+resource "kubernetes_manifest" "poc_root_ca" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Certificate"
+    metadata = {
+      name      = "${local.root_ca_name}"
+      namespace = "${kubernetes_namespace.cert_manager_ns.metadata[0].name}"
+    }
+    spec = {
+      isCA       = "true"
+      commonName = "${local.aks_name} AKS Cluster CA"
+      secretName = "root-ca-certificate"
+      privateKey = {
+        algorithm = "ECDSA"
+        size      = 256
+      }
+      issuerRef = {
+        name  = "${kubernetes_manifest.cluster_issuer_self_signed.manifest.metadata.name}" #"${local.self_signed_cluster_issuer_name}"
+        kind  = "ClusterIssuer"
+        group = "cert-manager.io"
+      }
+    }
+  }
+
+  depends_on = [
+    kubernetes_namespace.cert_manager_ns,
+    kubernetes_manifest.cluster_issuer_self_signed
+  ]
+}
+
+# Cluster Issuer for the entire cluster using the CA certificate
+resource "kubernetes_manifest" "cluster_issuer_poc_ca" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "ClusterIssuer"
+    metadata = {
+      name = "${var.certificate_ca_issuer_name}"
+    }
+    spec = {
+      ca = {
+        secretName = "${kubernetes_manifest.poc_root_ca.manifest.spec.secretName}"
+      }
+    }
+  }
+
+  depends_on = [
+    kubernetes_manifest.poc_root_ca
+  ]
+}
+#*/

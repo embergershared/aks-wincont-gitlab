@@ -78,3 +78,5 @@ resource "helm_release" "cert_manager_release" {
 # Boot strap the Cert issuer
 # https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers
 
+# Execute:
+# kubectl apply - f XX\aks-wincont-gitlab\azure\terraform\aks-lz-accelerator\10-AKS-Controllers\Self-Signed-CA.yaml

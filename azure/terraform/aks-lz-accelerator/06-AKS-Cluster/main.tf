@@ -129,23 +129,23 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   tags = merge(var.base_tags, var.plan_tags)
 }
 
-# resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
-#   name                  = "ubu"
-#   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks-cluster.id
-#   vm_size               = "Standard_DS2_v2"
-#   os_disk_size_gb       = 30
-#   os_type               = "Linux"
-#   os_sku                = "Ubuntu"
-#   min_count             = 1
-#   max_count             = 3
-#   enable_auto_scaling   = true
-#   max_pods              = 250
-#   mode                  = "User"
-#   vnet_subnet_id        = local.snetAksId
-#   zones                 = ["1", "3"] # zones = ["1", "2", "3"]
+resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
+  name                  = "ubu"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks-cluster.id
+  vm_size               = "Standard_DS2_v2"
+  os_disk_size_gb       = 30
+  os_type               = "Linux"
+  os_sku                = "Ubuntu"
+  min_count             = 2
+  max_count             = 3
+  enable_auto_scaling   = true
+  max_pods              = 250
+  mode                  = "User"
+  vnet_subnet_id        = local.snetAksId
+  zones                 = ["1", "3"] # zones = ["1", "2", "3"]
 
-#   tags = merge(var.base_tags, var.plan_tags)
-# }
+  tags = merge(var.base_tags, var.plan_tags)
+}
 
 resource "azurerm_kubernetes_cluster_node_pool" "win_nodepool" {
   name                  = "win"

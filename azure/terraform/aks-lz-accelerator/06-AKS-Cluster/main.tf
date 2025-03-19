@@ -66,11 +66,12 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   oidc_issuer_enabled               = true
   workload_identity_enabled         = true
   automatic_channel_upgrade         = "patch"
-  http_application_routing_enabled  = true
 
+  http_application_routing_enabled = false
   # web_app_routing {
   #   dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
   # }
+
   azure_active_directory_role_based_access_control {
     managed                = true
     azure_rbac_enabled     = true

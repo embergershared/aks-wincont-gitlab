@@ -20,7 +20,4 @@ locals {
   # # Bastion resource names
   # hub_bastion_name    = data.azurerm_resources.hub_bastion_s.resources.0.name
   # hub_bastion_rg_name = data.azurerm_resources.hub_bastion_s.resources.0.resource_group_name
-
-  self_signed_cluster_issuer_name = "selfsigned-cluster-issuer"
-  root_ca_name                    = "hww-poc-ca-cert"
 }

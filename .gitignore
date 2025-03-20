@@ -13,6 +13,11 @@ azure/terraform/aks-lz-accelerator/share-*
 azure/terraform/aks-lz-accelerator/10-AKS-Controllers/ingress-nginx-4.12.0.tgz
 azure/terraform/aks-lz-accelerator/10-AKS-Controllers/ingress-nginx-4.12.0/*
 
+**/*.crt
+**/*.pem
+**/*.pfx
+**/*.p12
+
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,visualstudio,visualstudiocode,dotnetcore,aspnetcore
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,visualstudio,visualstudiocode,dotnetcore,aspnetcore
 

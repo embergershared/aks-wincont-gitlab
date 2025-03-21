@@ -7,4 +7,3 @@ base_tags = {
 
 rgHubName = "rg-use2-391575-s3-akswincont-avm-hub"
 rgLzName  = "rg-use2-391575-s3-akswincont-avm-lz"
-

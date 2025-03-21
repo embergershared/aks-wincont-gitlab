@@ -82,6 +82,7 @@ module "jumpbox_vm" {
   #   version   = "latest"
   # }
   source_image_reference = var.source_image_reference
+  license_type           = "Windows_Server"
 
   tags = merge(var.base_tags, var.plan_tags)
 }

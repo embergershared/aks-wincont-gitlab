@@ -49,6 +49,7 @@ $gl_runner_packages = @(
   "nerd-fonts-jetbrainsmono",
   "nerd-fonts-firamono",
   "nerd-fonts-firacode",
+  "openssl",
   "vscode"
 )
 

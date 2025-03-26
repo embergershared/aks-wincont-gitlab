@@ -3,7 +3,7 @@ $filePath = "C:\Dev-VM-setup_log.txt"
 
 function AddLog ($message) {
   Add-Content -Path $filePath -Value "$(Get-Date): $message"
-  AddLog "$(Get-Date): $message"
+  Write-Host "$(Get-Date): $message"
 }
 
 New-Item -Path $filePath -ItemType File -Force

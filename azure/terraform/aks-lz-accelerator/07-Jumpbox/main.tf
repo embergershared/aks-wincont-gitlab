@@ -5,12 +5,14 @@ module "naming" {
   suffix  = ["lz"]
 }
 resource "random_password" "vm_password" {
-  length  = 15
-  special = true
-  numeric = true
-  lower   = true
-  upper   = true
+  length           = 20
+  special          = true
+  numeric          = true
+  lower            = true
+  upper            = true
+  override_special = "!@#$%^&*()-_=+[]{}<>?"
 }
+
 resource "azurerm_key_vault_secret" "this" {
   name         = "${module.naming.virtual_machine.name_unique}-password"
   value        = random_password.vm_password.result # var.jumpbox_admin_password
@@ -75,6 +77,15 @@ module "jumpbox_vm" {
     storage_account_type = "Standard_LRS"
   }
 
+  data_disk_managed_disks = {
+    disk1 = {
+      name                 = "${module.naming.managed_disk.name_unique}-lun0"
+      storage_account_type = "Premium_LRS"
+      lun                  = 0
+      caching              = "ReadWrite"
+      disk_size_gb         = 32
+    }
+  }
   # source_image_reference = {
   #   publisher = "Canonical"
   #   offer     = "0001-com-ubuntu-server-jammy"

@@ -15,3 +15,7 @@ source_image_reference = {
 }
 
 gl_runner_admin_username = "glRunnerAdmin"
+
+msft_entra_id_group_name = "HWW AKS PoC - MSFT team"
+hww_entra_id_group_name  = "HWW AKS PoC - Hilton team"
+private_dns_zone_name    = "private.contoso.com"

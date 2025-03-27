@@ -52,3 +52,16 @@ data "azurerm_resources" "hub_bastion_s" {
 data "template_file" "runner_setup_file" {
   template = file("Gitlab-runner-setup.ps1")
 }
+
+data "azuread_group" "msft_entra_id_group" {
+  display_name     = var.msft_entra_id_group_name
+  security_enabled = true
+}
+data "azuread_group" "hww_entra_id_group" {
+  display_name     = var.hww_entra_id_group_name
+  security_enabled = true
+}
+data "azurerm_private_dns_zone" "private_dns_zone" {
+  name                = var.private_dns_zone_name
+  resource_group_name = var.rgLzName
+}

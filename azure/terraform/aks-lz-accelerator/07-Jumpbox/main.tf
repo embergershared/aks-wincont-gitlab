@@ -98,7 +98,7 @@ module "jumpbox_vm" {
   tags = merge(var.base_tags, var.plan_tags)
 }
 resource "azurerm_virtual_machine_extension" "entra_id_login" {
-  # az vm extension set --publisher Microsoft.Azure.ActiveDirectory --name AADLoginForWindows -g <rg_name> -n <VM Name>
+  # az vm extension set --publisher Microsoft.Azure.ActiveDirectory --name AADLoginForWindows -g <rg_name> --vm-name <VM Name>
   name                       = "AADLoginForWindows"
   virtual_machine_id         = module.jumpbox_vm.resource_id
   publisher                  = "Microsoft.Azure.ActiveDirectory"

@@ -69,3 +69,7 @@ variable "source_image_reference" {
     version   = "latest"
   }
 }
+
+variable "msft_entra_id_group_name" {}
+variable "hww_entra_id_group_name" {}
+variable "private_dns_zone_name" {}

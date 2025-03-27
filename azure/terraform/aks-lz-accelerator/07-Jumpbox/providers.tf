@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.74"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 2.15.0"
+    }
     http = {
       source  = "hashicorp/http"
       version = "~> 3.4"
@@ -32,4 +36,9 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
+}
+provider "azuread" {
+  tenant_id     = var.tenant_id
+  client_id     = var.client_id
+  client_secret = var.client_secret
 }

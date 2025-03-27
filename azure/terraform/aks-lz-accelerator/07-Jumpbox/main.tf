@@ -97,6 +97,45 @@ module "jumpbox_vm" {
 
   tags = merge(var.base_tags, var.plan_tags)
 }
+resource "azurerm_virtual_machine_extension" "entra_id_login" {
+  # az vm extension set --publisher Microsoft.Azure.ActiveDirectory --name AADLoginForWindows -g <rg_name> -n <VM Name>
+  name                       = "AADLoginForWindows"
+  virtual_machine_id         = module.jumpbox_vm.resource_id
+  publisher                  = "Microsoft.Azure.ActiveDirectory"
+  type                       = "AADLoginForWindows"
+  type_handler_version       = "2.2"
+  auto_upgrade_minor_version = true
+
+  tags = merge(var.base_tags, var.plan_tags)
+}
+
+# Creating role assignments for the PoC users' groups to login to the Jumpbox with their Entra ID user
+resource "azurerm_role_assignment" "msft_group_role_assignment" {
+  scope                            = module.jumpbox_vm.resource_id
+  role_definition_name             = "Virtual Machine Administrator Login"
+  principal_id                     = data.azuread_group.msft_entra_id_group.id
+  principal_type                   = "Group"
+  skip_service_principal_aad_check = true
+}
+resource "azurerm_role_assignment" "hww_group_role_assignment" {
+  scope                            = module.jumpbox_vm.resource_id
+  role_definition_name             = "Virtual Machine User Login"
+  principal_id                     = data.azuread_group.hww_entra_id_group.id
+  principal_type                   = "Group"
+  skip_service_principal_aad_check = true
+}
+
+# Creating the A record in the Private DNS Zone for the VM
+resource "azurerm_private_dns_a_record" "time_tracker_ingress_a_record" {
+  name                = module.naming.virtual_machine.name_unique
+  zone_name           = data.azurerm_private_dns_zone.private_dns_zone.name
+  resource_group_name = var.rgLzName
+  ttl                 = 60
+
+  records = [
+    module.jumpbox_vm.network_interfaces["network_interface_1"].private_ip_address
+  ]
+}
 #*/
 
 
